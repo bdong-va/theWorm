@@ -14,7 +14,7 @@ public class EnemyRandomWalk : MonoBehaviour {
     private GameObject enemy_anim;
 
 	// Use this for initialization
-	void Start () {
+	public void Start () {
         isWalking = false;
         CurrentSpeed = maxSpeed;
         angle = 0f;
@@ -28,34 +28,37 @@ public class EnemyRandomWalk : MonoBehaviour {
             enemy_anim = this.gameObject;
         }
         anim = enemy_anim.GetComponent<Animator>();
-        RandomWalk();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        //move towards target
-        if (isWalking)
-        {
-            CurrentSpeed = maxSpeed;
-        }
-        else {
-            CurrentSpeed = 0;
-        }
-        transform.position = transform.position + new Vector3(-CurrentSpeed * Mathf.Sin(angle * 2 * Mathf.PI / 360) * Time.deltaTime, CurrentSpeed * Mathf.Cos(angle * 2 * Mathf.PI / 360)* Time.deltaTime, 0f);
-        anim.SetFloat("speed", CurrentSpeed);
-    }
+   }
 
-    void RandomWalk() {
-        // check if this round need to walk
-        if (Random.value < walkChance ) {
-            isWalking = true;
-            angle = Random.Range(0f, 180f);
-        }
-        else {
-            isWalking = false;
-        }
-        enemy_anim.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        Invoke("RandomWalk", Random.Range(timeGapMin,timeGapMax));
+	public void RandomWalkUpdate(){
+		if (isWalking)
+		{
+			CurrentSpeed = maxSpeed;
+		}
+		else {
+			CurrentSpeed = 0;
+		}
+		transform.position = transform.position + new Vector3(-CurrentSpeed * Mathf.Sin(angle * 2 * Mathf.PI / 360) * Time.deltaTime, CurrentSpeed * Mathf.Cos(angle * 2 * Mathf.PI / 360)* Time.deltaTime, 0f);
+		anim.SetFloat("speed", CurrentSpeed);
+	}
+
+    public void TriggerRandomWalk() {
+			// check if this round need to walk
+			if (Random.value < walkChance) {
+				isWalking = true;
+				angle = Random.Range (0f, 180f);
+                enemy_anim.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            } else {
+				isWalking = false;
+			}
+        Invoke("TriggerRandomWalk", Random.Range(timeGapMin,timeGapMax));
     }
+	void stopRandomWalk(){
+        CancelInvoke("TriggerRandomWalk");
+	}
 
 }
