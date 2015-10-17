@@ -3,9 +3,12 @@ using System.Collections;
 
 public class testPlayer : MonoBehaviour {
     public float moveSpeed;
+    public float verticalSpeed;
     private float xSpeed;
     private float ySpeed;
-
+    public float depth;
+    private float minDeapth = 0;
+    private float maxDeapth = 100;
 
     // Use this for initialization
     void Start () {
@@ -30,6 +33,25 @@ public class testPlayer : MonoBehaviour {
         {
 
             transform.Rotate(0, 0, Time.deltaTime * 180);
+        }
+
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            if (depth > minDeapth)
+            {
+                depth -= verticalSpeed;
+            }
+        }
+
+
+        if (Input.GetKey(KeyCode.E))
+        {
+
+            if (depth < maxDeapth)
+            {
+                depth += verticalSpeed;
+            }
         }
 
         if (Input.GetKey(KeyCode.D))
