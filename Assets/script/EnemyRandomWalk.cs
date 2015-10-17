@@ -35,7 +35,7 @@ public class EnemyRandomWalk : MonoBehaviour {
    }
 
 	public void RandomWalkUpdate(){
-		if (isWalking)
+        if (isWalking)
 		{
 			CurrentSpeed = maxSpeed;
 		}
@@ -57,7 +57,10 @@ public class EnemyRandomWalk : MonoBehaviour {
 			}
         Invoke("TriggerRandomWalk", Random.Range(timeGapMin,timeGapMax));
     }
-	void stopRandomWalk(){
+	public void stopRandomWalk(){
+        isWalking = false;
+        CurrentSpeed = 0;
+        anim.SetFloat("speed", CurrentSpeed);
         CancelInvoke("TriggerRandomWalk");
 	}
 
