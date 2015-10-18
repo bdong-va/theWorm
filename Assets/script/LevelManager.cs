@@ -5,9 +5,9 @@ using UnityStandardAssets.ImageEffects;
 public class LevelManager : MonoBehaviour {
 
     public GameObject environmentCamera;
-    public float depth;
+    //public float depth;
 
-    private float maxDepth = 100;  // the maximum depth of player
+    public float maxDepth = 100;  // the maximum depth of player
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        this.setBlur(depth);
+        //this.setBlur(depth);
 	}
 
 
