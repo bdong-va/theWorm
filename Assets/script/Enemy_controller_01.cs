@@ -30,7 +30,7 @@ public class Enemy_controller_01 : MonoBehaviour {
         }
 	}
 
-    void TriggerAlert() {
+    public void TriggerAlert() {
         randomWalkScript.stopRandomWalk();
         enemyAlertScript.TriggerAlert();
         Invoke("StartAlertSituation",1);
