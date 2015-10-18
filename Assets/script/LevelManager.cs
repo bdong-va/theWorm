@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour {
     //public float depth;
 
     public float maxDepth = 100;  // the maximum depth of player
-    private  float maxBlurDepth = 50;  // the maximum depth of blur
+    private  float maxBlurDepth = 20;  // the maximum depth of blur
     private float maxBlurLevel = 5;  // the maximum blur level
     private int hideCameraZ = 1;
 
