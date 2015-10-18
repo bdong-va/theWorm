@@ -5,46 +5,44 @@ public class OngroundAlter : MonoBehaviour
 {
 
     private bool findPlayer = false;
-    public GameObject player;
+    private GameObject player;
 
     // Use this for initialization
     void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
-        //int thisZ = this.transform.position.z;
+
         float playerDepth = player.GetComponent<testPlayer>().depth;
-        //Debug.Log("playerDepth");
+        //if find player and player is on the ground
+        // alert
         if (findPlayer && playerDepth == 0) {
-            Debug.Log("ongrond alert");
+            //alert
+            this.transform.root.gameObject.GetComponent<Enemy_controller_01>().TriggerAlert();
         }
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
 
-        // If it hits an enemy...
+        // If it hits the player
         if (col.tag == "Player")
         {
-            //Debug.Log("found player");
             findPlayer = true;
-            //this.die();
         }
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
 
-        // If it hits an enemy...
+        // If it hits the player
         if (col.tag == "Player")
         {
-            //Debug.Log("player left");
             findPlayer = false;
-            //this.die();
         }
     }
 }
