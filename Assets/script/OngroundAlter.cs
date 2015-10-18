@@ -45,4 +45,7 @@ public class OngroundAlter : MonoBehaviour
             findPlayer = false;
         }
     }
+    public bool SeePython() {
+        return findPlayer;
+    }
 }

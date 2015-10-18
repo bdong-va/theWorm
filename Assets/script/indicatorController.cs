@@ -2,20 +2,25 @@
 using System.Collections;
 
 public class indicatorController : MonoBehaviour {
-    public float depth;
+
     public float emptyOffset;
     public float fullOffset;
-	// Use this for initialization
-	void Start () {
+    private GameObject player;
+    private float depth;
+    // Use this for initialization
+    void Start () {
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void Update () {
+
+        depth = player.gameObject.GetComponent<testPlayer>().depth;
         foreach (Transform t in transform)
         {
-            if (t.name == "Core")
+            if (t.name == "core")
             {
-                t.transform.position = new Vector3(t.transform.position.x, emptyOffset + (depth/100) * (fullOffset - emptyOffset), t.transform.position.z);
+                t.transform.position = new Vector3(t.transform.position.x, fullOffset - (depth/100) * (fullOffset - emptyOffset), t.transform.position.z);
             }
         }
     }
