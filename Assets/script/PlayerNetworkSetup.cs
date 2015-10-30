@@ -4,9 +4,18 @@ using UnityEngine.Networking;
 
 public class PlayerNetworkSetup : NetworkBehaviour {
 
-    //unity function when a player joinin the game
-    public override void OnStartLocalPlayer()
-    {
-        GetComponent<testPlayer>().enabled = true;
+    ////unity function when a player joinin the game
+    //public override void OnStartLocalPlayer()
+    //{
+    //    GetComponent<testPlayer>().enabled = true;
+    //}
+
+    void Start() {
+
+        if (isLocalPlayer) {
+
+            GetComponent<testPlayer>().enabled = true;
+        }
+
     }
 }
