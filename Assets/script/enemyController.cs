@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 /// <summary>
 /// author: Bo
 /// set decision tree logic system for enemies, or Civilians.
 /// </summary>
-public class enemyController : MonoBehaviour {
+public class enemyController : NetworkBehaviour{
     public float panicLevelMax;
     public float panicLevelMin;
     public float WalkSpeedMax;
@@ -16,6 +17,13 @@ public class enemyController : MonoBehaviour {
 
     delegate void MyDelegate();
     MyDelegate enemyAction;
+
+    [SyncVar]
+    private Vector3 syncPos;
+    [SyncVar]
+    private float syncRotation;
+    [SyncVar]
+    private float syncSpeed;
 
     private Animator anim;
     private float randomTime;
@@ -31,20 +39,27 @@ public class enemyController : MonoBehaviour {
         anim = GetComponent<Animator>();
         pythonPosition = new Vector3(0f, 0f, 0f); 
         speed = 0;
-        angle = Random.Range(0, 360);
+        angle = 0;
         enemyAction = InPanic;
     }
 
     // Update is called once per frame
     public void Update () {
-        makeDecision();
-        enemyAction();
+        if (isServer)
+        {
+            makeDecision();
+            enemyAction();   
+        }
+        CmdSyncDataToServer();
+        TransmitDataFromServer();
     }
     // is enemy in panic?
     private void InPanic()
     {
         if (panicLevel > panicLevelMin)
         {
+            Debug.Log("I am in panic!");
+
             checkPythonWhenPanic();
         }
         else
@@ -158,4 +173,22 @@ public class enemyController : MonoBehaviour {
         anim.SetFloat("speed", speed);
     }
 
+    [Command]
+    void CmdSyncDataToServer()
+    {
+        syncPos = transform.position;
+        syncRotation = angle;
+        syncSpeed = speed;
+    }
+    //only run on clients
+    //tell server the position
+    [ClientCallback]
+    void TransmitDataFromServer()
+    {
+        transform.position = syncPos;
+        angle = syncRotation;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        speed = syncSpeed;
+        anim.SetFloat("speed", speed);
+    }
 }
