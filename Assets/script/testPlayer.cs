@@ -10,6 +10,8 @@ public class testPlayer : MonoBehaviour {
     private float minDeapth = 0;
     private float maxDeapth = 100;
     private GameObject levelManager;
+    private bool testAbility = false;
+
     // Use this for initialization
     void Start () {
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
@@ -80,10 +82,25 @@ public class testPlayer : MonoBehaviour {
 
         }
 
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            //test ability
+            ability();
+
+
+        }
+
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             //anim.SetBool("Moving", false);
             GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         }
+
+
+    }
+
+    public void ability() {
+        gameObject.GetComponent<PlayerSync>().testAbility();
     }
 }
