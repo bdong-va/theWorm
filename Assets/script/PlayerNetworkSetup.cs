@@ -15,6 +15,24 @@ public class PlayerNetworkSetup : NetworkBehaviour {
         if (isLocalPlayer) {
 
             GetComponent<testPlayer>().enabled = true;
+
+           
+
+            string playerName = gameObject.name.ToString();
+            if (playerName.Equals("python(Clone)"))
+            {
+                Debug.Log("player is python");
+                GameObject groundPlayerCamera = GameObject.FindGameObjectWithTag("GroundPlayerCamera"); 
+                groundPlayerCamera.GetComponent<Camera>().enabled = false;
+               
+
+
+            }
+            else {
+                Debug.Log("player is ground");
+                GameObject pythonCamera = GameObject.FindGameObjectWithTag("PythonCamera");
+                pythonCamera.GetComponent<Camera>().enabled = false;
+            }
         }
 
     }

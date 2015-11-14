@@ -17,6 +17,7 @@ public class PlayerSyncPosition : NetworkBehaviour {
 
         //if not local player, and position changes, then get the new position
         LerpPosition();
+
 	}
 
     //only set position for the player not local
