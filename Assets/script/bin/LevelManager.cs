@@ -5,22 +5,41 @@ using UnityStandardAssets.ImageEffects;
 public class LevelManager : MonoBehaviour {
 
     public GameObject environmentCamera;
+    public Vector3 wormPosition;
+    public bool wormOnGround;
     //public float depth;
 
     public float maxDepth = 100;  // the maximum depth of player
     private  float maxBlurDepth = 20;  // the maximum depth of blur
     private float maxBlurLevel = 5;  // the maximum blur level
     private int hideCameraZ = 1;
+    private GameObject worm;
+
 
     // Use this for initialization
     void Start () {
-	
+        worm = GameObject.FindGameObjectWithTag("Python");
+        if (worm != null)
+        {
+            wormOnGround = worm.GetComponent<WormController>().onground;
+            wormPosition = worm.transform.position;
+        }
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
         //this.setBlur(depth);
-	}
+        if (worm != null)
+        {
+            wormOnGround = worm.GetComponent<WormController>().onground;
+            wormPosition = worm.transform.position;
+        }
+        else
+        {
+            worm = GameObject.FindGameObjectWithTag("Python");
+        }
+    }
 
 
     /// <summary>

@@ -13,6 +13,7 @@ public class enemyController : NetworkBehaviour{
     public float randomTimeLimit;
     public bool sensePython;
     public float walkChance;
+    public float alertDistance;
 
 
     delegate void MyDelegate();
@@ -24,7 +25,7 @@ public class enemyController : NetworkBehaviour{
     private float syncRotation;
     [SyncVar]
     private float syncSpeed;
-
+    private LevelManager levelManager;
     private Animator anim;
     private float randomTime;
     private float panicLevel;
@@ -41,12 +42,14 @@ public class enemyController : NetworkBehaviour{
         speed = 0;
         angle = 0;
         enemyAction = InPanic;
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
     }
 
     // Update is called once per frame
     public void Update () {
         if (isServer)
         {
+            checkWorm();
             makeDecision();
             enemyAction();   
         }
@@ -132,6 +135,19 @@ public class enemyController : NetworkBehaviour{
     private void makeDecision()
     {
         InPanic();
+    }
+
+    private void checkWorm()
+    {
+        float distance = Vector3.Distance(transform.position, levelManager.wormPosition);
+        if (distance < alertDistance && levelManager.wormOnGround)
+        {
+            this.sensePython = true;
+        }
+        else
+        {
+            this.sensePython = false;
+        }
     }
     //....................................
     //Enemy Action
