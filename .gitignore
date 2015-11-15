@@ -19,11 +19,6 @@ obj/
 *.unityproj
 *.booproj
 
-#==========================#
-# Rameez's Brain generated #
-#==========================#
-*.meta
-*.asset
 
 # ============ #
 # OS generated #
