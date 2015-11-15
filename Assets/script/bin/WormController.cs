@@ -14,8 +14,8 @@ public class WormController : MonoBehaviour {
     private GameObject levelManager;
     private bool testAbility = false;
     private float hp = 100;
-    public Scrollbar healthBar;
-    
+    private Scrollbar healthBar;
+    private bool onground=false;
     // Use this for initialization
     void Start()
     {
@@ -50,8 +50,9 @@ public class WormController : MonoBehaviour {
             }
 
             //if on the ground, lost health
-            if (depth == -1)
+            if (depth < 1)
             {
+                onground = false;
                 CancelInvoke("hpLostByTime");
             }
         }
@@ -68,8 +69,10 @@ public class WormController : MonoBehaviour {
             }
 
             //if on the ground, lost health
-            if (depth == 1)
+            //only set when worm is under ground
+            if (depth == 1 && !onground)
             {
+                onground = true;
                 InvokeRepeating("hpLostByTime", 1, 1);
             }
         }
