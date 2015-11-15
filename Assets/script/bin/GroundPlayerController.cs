@@ -31,59 +31,10 @@ public class GroundPlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
-
-        if (Input.GetKey(KeyCode.A))
-        {
-
-            transform.Rotate(0, 0, Time.deltaTime * 180);
-        }
-
-
-        if (Input.GetKey(KeyCode.Q))
-        {
-            if (depth > minDeapth)
-            {
-                depth -= verticalSpeed;
-
-                //set blur
-                levelManager.GetComponent<LevelManager>().setBlur(this.depth);
-            }
-
-        }
-
-
-        if (Input.GetKey(KeyCode.E))
-        {
-
-            if (depth < maxDeapth)
-            {
-                depth += verticalSpeed;
-                //set blur
-                levelManager.GetComponent<LevelManager>().setBlur(this.depth);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(0, 0, -Time.deltaTime * 180);
-        }
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            //Debug.Log(xSpeed+ySpeed);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(moveSpeed * xSpeed, moveSpeed * ySpeed);
-
-
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-
-            GetComponent<Rigidbody2D>().velocity = new Vector2(-moveSpeed * xSpeed, -moveSpeed * ySpeed);
-
-        }
-
+        xSpeed = Input.GetAxis("Horizontal") * moveSpeed;
+        ySpeed = Input.GetAxis("Vertical") * moveSpeed;
+        GetComponent<Rigidbody2D>().velocity = new Vector2(xSpeed, ySpeed);
+        
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -92,13 +43,6 @@ public class GroundPlayerController : MonoBehaviour {
 
 
         }
-
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
-        {
-            //anim.SetBool("Moving", false);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        }
-
 
     }
 
