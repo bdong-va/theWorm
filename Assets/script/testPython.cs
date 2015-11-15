@@ -23,13 +23,13 @@ public class testPython : MonoBehaviour {
 
 		transform.position = new Vector3((transform.position.x + (h * speed)), (transform.position.y + (v * speed)));
 
-		if (Mathf.Abs(h)>elastifactor) {
+		if (Mathf.Abs(h)>elastifactor || Mathf.Abs(v)>elastifactor) {
 			pos[6]=pos[4];
 			pos[4]=pos[2];
 			pos[2]=pos[0];
-		}
+		//}
 
-		if (Mathf.Abs(v)>elastifactor) {
+		//if (Mathf.Abs(v)>elastifactor) {
 			pos[7]=pos[5];
 			pos[5]=pos[3];
 			pos[3]=pos[1];
