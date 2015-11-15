@@ -12,27 +12,31 @@ public class GroundPlayerController : MonoBehaviour {
     private float maxDeapth = 100;
     private GameObject levelManager;
     private bool testAbility = false;
+    private Animator anim;
 
     // Use this for initialization
     void Start()
     {
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        anim = GetComponent<Animator>();
     }
 
     void FixedUpdate()
     {
         //Debug.Log("player fixed update");
-        float z = (transform.eulerAngles.z) / 360 * 2 * Mathf.PI;
-        xSpeed = -Mathf.Sin(z);
-        ySpeed = Mathf.Cos(z);
+        //float z = (transform.eulerAngles.z) / 360 * 2 * Mathf.PI;
+        //xSpeed = -Mathf.Sin(z);
+        //ySpeed = Mathf.Cos(z);
+        xSpeed = Input.GetAxis("Horizontal") * moveSpeed;
+        ySpeed = Input.GetAxis("Vertical") * moveSpeed;
         //Debug.Log(z);
+        anim.SetFloat("speed", Mathf.Sqrt(Mathf.Pow(xSpeed,2) + Mathf.Pow(ySpeed, 2)));
     }
 
     // Update is called once per frame
     void Update()
     {
-        xSpeed = Input.GetAxis("Horizontal") * moveSpeed;
-        ySpeed = Input.GetAxis("Vertical") * moveSpeed;
+
         GetComponent<Rigidbody2D>().velocity = new Vector2(xSpeed, ySpeed);
         
 
