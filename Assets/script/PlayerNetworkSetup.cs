@@ -25,19 +25,25 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 
 
             string playerName = gameObject.name.ToString();
+
+            //TODO change it to player's real name
             if (playerName.Equals("python(Clone)"))
             {
-                Debug.Log("player is python");
-                GameObject groundPlayerCamera = GameObject.FindGameObjectWithTag("GroundPlayerCamera"); 
-                groundPlayerCamera.GetComponent<Camera>().enabled = false;
-               
-
-
+                Debug.Log("player is worm");
+                GameObject[] groundPlayerCameras = GameObject.FindGameObjectsWithTag("GroundPlayerCamera"); 
+                
+                foreach(GameObject camera in groundPlayerCameras){
+                    camera.GetComponent<Camera>().enabled = false;    
+                }                
             }
             else {
                 Debug.Log("player is ground");
-                GameObject pythonCamera = GameObject.FindGameObjectWithTag("PythonCamera");
-                pythonCamera.GetComponent<Camera>().enabled = false;
+                GameObject[] wormCameras = GameObject.FindGameObjectsWithTag("WormCamera");
+
+                foreach(GameObject camera in wormCameras)
+                {
+                    camera.GetComponent<Camera>().enabled = false;    
+                }
             }
         }
 
