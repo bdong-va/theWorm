@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class WormController : MonoBehaviour {
+    //TODO remove it
+    public float test;
 
     public float moveSpeed;
     private float verticalSpeed = 1;
@@ -181,6 +183,8 @@ public class Skill {
 
     [HideInInspector]
     public float currentCoolDown;
+
+
     [HideInInspector]
     public Image skillIcon;
 }
