@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PythonCameraController : MonoBehaviour {
+public class WormCameraController : MonoBehaviour {
     private GameObject player;
     // Use this for initialization
     void Start () {
@@ -12,7 +12,7 @@ public class PythonCameraController : MonoBehaviour {
     void Update()
     {
         //let camera follow python
-        player = GameObject.FindGameObjectWithTag("Python");
+        player = GameObject.FindGameObjectWithTag("Worm");
         if (player != null)
         {
             //bool playAlive = player.GetComponent<PlayerController>().playAlive;
