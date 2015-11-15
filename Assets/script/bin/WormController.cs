@@ -15,7 +15,7 @@ public class WormController : MonoBehaviour {
     private bool testAbility = false;
     private float hp = 100;
     private Scrollbar healthBar;
-    private bool onground=false;
+    public bool onground=false;
     // Use this for initialization
     void Start()
     {
