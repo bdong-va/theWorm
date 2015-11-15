@@ -27,14 +27,12 @@ public class testPython : MonoBehaviour {
 			pos[6]=pos[4];
 			pos[4]=pos[2];
 			pos[2]=pos[0];
-			Debug.Log (h.ToString());
 		}
 
 		if (Mathf.Abs(v)>elastifactor) {
 			pos[7]=pos[5];
 			pos[5]=pos[3];
 			pos[3]=pos[1];
-			Debug.Log (v.ToString());
 		}
 
 		pos [1] = transform.position.y;
