@@ -12,13 +12,13 @@ public class GroundPlayerController : MonoBehaviour {
     private float maxDeapth = 100;
     private GameObject levelManager;
     private bool testAbility = false;
-    private Animator anim;
+    //private Animator anim;
 
     // Use this for initialization
     void Start()
     {
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
-        anim = GetComponent<Animator>();
+        //anim = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -30,7 +30,7 @@ public class GroundPlayerController : MonoBehaviour {
         xSpeed = Input.GetAxis("Horizontal") * moveSpeed;
         ySpeed = Input.GetAxis("Vertical") * moveSpeed;
         //Debug.Log(z);
-        anim.SetFloat("speed", Mathf.Sqrt(Mathf.Pow(xSpeed,2) + Mathf.Pow(ySpeed, 2)));
+        //anim.SetFloat("speed", Mathf.Sqrt(Mathf.Pow(xSpeed,2) + Mathf.Pow(ySpeed, 2)));
     }
 
     // Update is called once per frame
