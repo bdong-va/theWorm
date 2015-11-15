@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class WormController : MonoBehaviour {
@@ -16,6 +17,13 @@ public class WormController : MonoBehaviour {
     private float hp = 100;
     private Scrollbar healthBar;
     public bool onground=false;
+
+    //skills cool down
+    public List<Skill> skills;
+
+    //private bool upCooldown;
+    //private bool downCooldown;
+
     // Use this for initialization
     void Start()
     {
@@ -23,7 +31,14 @@ public class WormController : MonoBehaviour {
         GameObject healthBarObject = GameObject.FindGameObjectWithTag("HealthBar");
         healthBar = healthBarObject.GetComponent<Scrollbar>();
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
-      
+
+        GameObject skillDown= GameObject.FindGameObjectWithTag("skill_down");
+        Image downImage = skillDown.GetComponent<Image>();
+        skills[0].skillIcon = downImage;
+
+        GameObject skillUp = GameObject.FindGameObjectWithTag("skill_up");
+        Image upImage = skillUp.GetComponent<Image>();
+        skills[1].skillIcon = upImage;
     }
 
     void FixedUpdate()
@@ -38,16 +53,21 @@ public class WormController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        //down
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (depth > minDeapth)
-            {
-                depth -= verticalSpeed;
+            //if not cool down and not in min deapth
+            if ((skills[0].currentCoolDown >= skills[0].cooldown) && (depth > minDeapth)) {
 
+                depth -= verticalSpeed;                    
                 //set blur
                 levelManager.GetComponent<LevelManager>().setBlur(this.depth);
+
+                //set skill cooldown
+                skills[0].currentCoolDown = 0;
+
             }
+
 
             //if on the ground, lost health
             if (depth < 1)
@@ -57,15 +77,20 @@ public class WormController : MonoBehaviour {
             }
         }
 
-
+        //up
         if (Input.GetKeyDown(KeyCode.E))
         {
 
-            if (depth < maxDeapth)
+        //if not cool down and not < maxdeapth
+            if ((skills[1].currentCoolDown >= skills[1].cooldown) && (depth < maxDeapth))
             {
                 depth += verticalSpeed;
                 //set blur
                 levelManager.GetComponent<LevelManager>().setBlur(this.depth);
+
+
+                //set skill cooldown
+                skills[1].currentCoolDown = 0;
             }
 
             //if on the ground, lost health
@@ -118,6 +143,13 @@ public class WormController : MonoBehaviour {
         }
 
 
+        foreach (Skill s in skills) {
+            if (s.currentCoolDown < s.cooldown) {
+                s.currentCoolDown += Time.deltaTime;
+                s.skillIcon.fillAmount = s.currentCoolDown / s.cooldown;
+            }
+        }
+
     }
 
     public void ability()
@@ -140,4 +172,15 @@ public class WormController : MonoBehaviour {
     private void hpLostByTime() {
         this.loseHP(1);
     }
+}
+
+
+[System.Serializable]
+public class Skill {
+    public float cooldown;
+
+    [HideInInspector]
+    public float currentCoolDown;
+    [HideInInspector]
+    public Image skillIcon;
 }
