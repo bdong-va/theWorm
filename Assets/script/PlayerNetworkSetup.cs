@@ -14,9 +14,15 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 
         if (isLocalPlayer) {
 
-            GetComponent<testPlayer>().enabled = true;
+            if (GetComponent<WormController>() != null) {
+                GetComponent<WormController>().enabled = true;
+            }
 
-           
+            if (GetComponent<GroundPlayerController>() != null) {
+                GetComponent<GroundPlayerController>().enabled = true;
+            }
+                
+
 
             string playerName = gameObject.name.ToString();
             if (playerName.Equals("python(Clone)"))

@@ -33,17 +33,17 @@ public class LevelManager : MonoBehaviour {
         //rand of blurSize is 0-10
         //convert depth to 0 - 10
         //float blurLevel = depth /(maxDepth /maxBlur)/ maxBlur * 10;  
-        if (depth > maxBlurDepth) {
-            ////blurLevel = 10;
-            environmentCamera.transform.position = new Vector3(environmentCamera.transform.position.x, environmentCamera.transform.position.y, hideCameraZ);
-        } else{
-            blurLevel = depth / maxBlurDepth * maxBlurLevel;
-
-            if (environmentCamera.transform.position.z == hideCameraZ) {
-                environmentCamera.transform.position = new Vector3(environmentCamera.transform.position.x, environmentCamera.transform.position.y, -10);
-            }
+        blurLevel = depth / maxBlurDepth * maxBlurLevel;
+        if (depth <= -1) {
+            blurLevel = 10;
+        } else {
+            blurLevel = 0;
         }
-        Debug.Log("blurLevel = " + blurLevel);
+
+        //TODO: change camera to ground when worm on the ground
+        //if (environmentCamera.transform.position.z == hideCameraZ) {
+        //       environmentCamera.transform.position = new Vector3(environmentCamera.transform.position.x, environmentCamera.transform.position.y, -10);
+        //}
         environmentCamera.GetComponent<BlurOptimized>().blurSize = blurLevel;
     }
 
