@@ -1,57 +1,74 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class GroundPlayerController : MonoBehaviour {
+public class GroundPlayerController : NetworkBehaviour
+{
 
-    public float moveSpeed;
-    public float verticalSpeed;
+    public float maxSpeed;
     private float xSpeed;
     private float ySpeed;
-    public float depth;
-    private float minDeapth = 0;
-    private float maxDeapth = 100;
-    private GameObject levelManager;
-    private bool testAbility = false;
-    //private Animator anim;
-
+    private float currentSpeed;
+    private float angle;
+    private Animator anim;
+    [SyncVar]
+    private Vector3 syncPos;
+    [SyncVar]
+    private float syncRotation;
+    [SyncVar]
+    private float syncSpeed;
     // Use this for initialization
     void Start()
     {
-        levelManager = GameObject.FindGameObjectWithTag("LevelManager");
-        //anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
+        angle = 0;
     }
 
     void FixedUpdate()
     {
-        //Debug.Log("player fixed update");
-        //float z = (transform.eulerAngles.z) / 360 * 2 * Mathf.PI;
-        //xSpeed = -Mathf.Sin(z);
-        //ySpeed = Mathf.Cos(z);
-        xSpeed = Input.GetAxis("Horizontal") * moveSpeed;
-        ySpeed = Input.GetAxis("Vertical") * moveSpeed;
-        //Debug.Log(z);
-        //anim.SetFloat("speed", Mathf.Sqrt(Mathf.Pow(xSpeed,2) + Mathf.Pow(ySpeed, 2)));
+        // update the player speed
+        if (isServer)
+        {
+            xSpeed = Input.GetAxis("Horizontal") * maxSpeed;
+            ySpeed = Input.GetAxis("Vertical") * maxSpeed;
+            currentSpeed = Mathf.Sqrt(Mathf.Pow(xSpeed, 2) + Mathf.Pow(ySpeed, 2));
+            anim.SetFloat("speed", currentSpeed);
+            angle = (Mathf.Atan2(ySpeed, xSpeed) * 180 / Mathf.PI) - 90;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        GetComponent<Rigidbody2D>().velocity = new Vector2(xSpeed, ySpeed);
-        
-
-        if (Input.GetKey(KeyCode.Space))
+        if (isServer)
         {
-            //test ability
-            ability();
-
-
+            transform.position = transform.position + new Vector3(xSpeed * Time.deltaTime, ySpeed * Time.deltaTime, 0f);
+            if (xSpeed != 0 || ySpeed != 0)
+            {
+                this.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            }
         }
-
+        CmdSyncDataToServer();
+        TransmitDataFromServer();
     }
 
-    public void ability()
+    [Command]
+    void CmdSyncDataToServer()
     {
-        gameObject.GetComponent<PlayerSync>().testAbility();
+        syncPos = transform.position;
+        syncRotation = angle;
+        syncSpeed = currentSpeed;
     }
+    //only run on clients
+    //tell server the position
+    [ClientCallback]
+    void TransmitDataFromServer()
+    {
+        transform.position = syncPos;
+        angle = syncRotation;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        currentSpeed = syncSpeed;
+        anim.SetFloat("speed", currentSpeed);
+    }
+
 }
