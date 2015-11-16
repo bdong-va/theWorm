@@ -19,6 +19,15 @@ public class WormController : MonoBehaviour {
     private float hp = 100;
     private Scrollbar healthBar;
     public bool onground=false;
+    public bool isActive;
+    //worm body fields
+    public float speed = 0.1f;
+    public float elastifactor = 0.3f; // To stop it from scrunching up when it stops! Higher value = less scrunchy
+    public Transform bod1;
+    public Transform bod2;
+    public Transform bod3;
+
+    public float[] pos = { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f }; // *** SYNC VARIABLE OVER NETWORK **
 
     //skills cool down
     public List<Skill> skills;
@@ -41,22 +50,73 @@ public class WormController : MonoBehaviour {
         GameObject skillUp = GameObject.FindGameObjectWithTag("skill_up");
         Image upImage = skillUp.GetComponent<Image>();
         skills[1].skillIcon = upImage;
+
+        setupSegPositions();
+
+        isActive = gameObject.GetComponent<WormController>().isActiveAndEnabled;
     }
 
     void FixedUpdate()
     {
-        //Debug.Log("player fixed update");
-        float z = (transform.eulerAngles.z) / 360 * 2 * Mathf.PI;
-        xSpeed = -Mathf.Sin(z);
-        ySpeed = Mathf.Cos(z);
-        //Debug.Log(z);
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        //transform.Translate (new Vector3 (h * speed, v * speed));
+
+        transform.position = new Vector3((transform.position.x + (h * speed)), (transform.position.y + (v * speed)));
+
+        if (Mathf.Abs(h) > elastifactor || Mathf.Abs(v) > elastifactor)
+        {
+            pos[6] = pos[4];
+            pos[4] = pos[2];
+            pos[2] = pos[0];
+            //}
+
+            //if (Mathf.Abs(v)>elastifactor) {
+            pos[7] = pos[5];
+            pos[5] = pos[3];
+            pos[3] = pos[1];
+        }
+
+        pos[1] = transform.position.y;
+        pos[0] = transform.position.x;
+
+        updateWormSegPositions();
+
+        /* if (v != 0.0f) {
+			v = v / Mathf.Abs(v);
+			Debug.Log (v);
+			GetComponent<Rigidbody2D> ().AddForce (transform.up.normalized * speed * v);
+		}
+		transform.Rotate(0, 0, -h * speed * Time.deltaTime * 90); */
+
+    }
+
+    void setupSegPositions()
+    {
+        pos[0] = transform.position.x;
+        pos[1] = transform.position.y;
+        pos[2] = bod1.position.x;
+        pos[3] = bod1.position.y;
+        pos[4] = bod2.position.x;
+        pos[5] = bod2.position.y;
+        pos[6] = bod3.position.x;
+        pos[7] = bod3.position.y;
+    }
+
+
+    void updateWormSegPositions()
+    {
+        bod1.position = new Vector3(pos[2], pos[3]);
+        bod2.position = new Vector3(pos[4], pos[5]);
+        bod3.position = new Vector3(pos[6], pos[7]);
     }
 
     // Update is called once per frame
     void Update()
     {
         //down
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetButtonDown("Fire1"))
         {
             //if not cool down and not in min deapth
             if ((skills[0].currentCoolDown >= skills[0].cooldown) && (depth > minDeapth)) {
@@ -80,7 +140,7 @@ public class WormController : MonoBehaviour {
         }
 
         //up
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetButtonDown("Fire2"))
         {
 
         //if not cool down and not < maxdeapth
@@ -104,45 +164,13 @@ public class WormController : MonoBehaviour {
             }
         }
 
-        if (Input.GetKey(KeyCode.A))
-        {
+        //if (Input.GetButtonDown("Jump"))
+        //{
+        //    //test ability
+        //    ability();
 
-            transform.Rotate(0, 0, Time.deltaTime * 180);
-        }
+        //}
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(0, 0, -Time.deltaTime * 180);
-        }
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            //Debug.Log(xSpeed+ySpeed);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(moveSpeed * xSpeed, moveSpeed * ySpeed);
-
-
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-
-            GetComponent<Rigidbody2D>().velocity = new Vector2(-moveSpeed * xSpeed, -moveSpeed * ySpeed);
-
-        }
-
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            //test ability
-            ability();
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
-        {
-            //anim.SetBool("Moving", false);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        }
 
 
         foreach (Skill s in skills) {
