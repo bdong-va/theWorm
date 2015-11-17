@@ -17,16 +17,22 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             if (gameObject.transform.Find("head") != null)
             {
                 if (gameObject.transform.Find("head").gameObject.GetComponent<WormController>() != null)
-                {
+                {   
+                    //set worm's controller
                     gameObject.transform.Find("head").gameObject.GetComponent<WormController>().enabled = true;
                     gameObject.transform.Find("head").gameObject.GetComponent<WormBodyController>().enabled = false;
+
+                    //set ground player controller
+                    // GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
+                    // groundPlayer.GetComponent<GroundPlayerBodyController>().enabled = true;
                 }
             }
 
             if (GetComponent<GroundPlayerController>() != null) {
                 GetComponent<GroundPlayerController>().enabled = true;
-                GameObject worm = GameObject.FindGameObjectWithTag("Worm");
-                worm.transform.Find("head").gameObject.GetComponent<WormBodyController>().enabled = true;
+                GetComponent<GroundPlayerBodyController>().enabled = false;
+                // GameObject worm = GameObject.FindGameObjectWithTag("Worm");
+                // worm.transform.Find("head").gameObject.GetComponent<WormBodyController>().enabled = true;
             }
                 
 
