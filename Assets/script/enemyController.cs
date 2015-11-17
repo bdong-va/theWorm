@@ -14,7 +14,7 @@ public class enemyController : NetworkBehaviour{
     public bool sensePython;
     public float walkChance;
     public float alertDistance;
-
+    public bool death;
 
     delegate void MyDelegate();
     MyDelegate enemyAction;
@@ -25,6 +25,8 @@ public class enemyController : NetworkBehaviour{
     private float syncRotation;
     [SyncVar]
     private float syncSpeed;
+    [SyncVar]
+    private bool syncDeath;
     private LevelManager levelManager;
     private Animator anim;
     private float randomTime;
@@ -131,12 +133,25 @@ public class enemyController : NetworkBehaviour{
             angle = Random.Range(0, 360);
         }
     }
+    // check if npc is dead
+    private void isDead()
+    {
+        if (death)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            InPanic();
+        }
+    }
+    
     // start the decision make processing.
     private void makeDecision()
     {
-        InPanic();
+        isDead();
     }
-
+    
     private void checkWorm()
     {
         float distance = Vector3.Distance(transform.position, levelManager.wormPosition);
@@ -195,16 +210,19 @@ public class enemyController : NetworkBehaviour{
         syncPos = transform.position;
         syncRotation = angle;
         syncSpeed = speed;
+        syncDeath = death;
     }
     //only run on clients
     //tell server the position
     [ClientCallback]
     void TransmitDataFromServer()
     {
-        transform.position = syncPos;
+        //transform.position = syncPos;
+        transform.position = Vector3.Lerp(transform.position, syncPos, Time.deltaTime);
         angle = syncRotation;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
         speed = syncSpeed;
         anim.SetFloat("speed", speed);
+        death = syncDeath;
     }
 }
