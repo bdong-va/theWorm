@@ -168,11 +168,12 @@ public class WormController : MonoBehaviour {
 
         //}
 
-
-
-        foreach (Skill s in skills) {
-            if (s.currentCoolDown < s.cooldown) {
+        foreach (Skill s in skills)
+        {
+            if (s.currentCoolDown < s.cooldown)
+            {
                 s.currentCoolDown += Time.deltaTime;
+
                 s.skillIcon.fillAmount = s.currentCoolDown / s.cooldown;
             }
         }
@@ -206,7 +207,7 @@ public class WormController : MonoBehaviour {
 public class Skill {
     public float cooldown;
 
-    [HideInInspector]
+    // [HideInInspector]
     public float currentCoolDown;
 
 
