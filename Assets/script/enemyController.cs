@@ -65,8 +65,6 @@ public class enemyController : NetworkBehaviour{
     {
         if (panicLevel > panicLevelMin)
         {
-            Debug.Log("I am in panic!");
-
             checkPythonWhenPanic();
         }
         else
@@ -191,8 +189,7 @@ public class enemyController : NetworkBehaviour{
     // pythong appeared again, update memory. adjust steps.
     private void updatePythonPosition()
     {
-        Debug.Log("Update Position!");
-        pythonPosition = GameObject.FindGameObjectWithTag("Python").transform.position;
+        pythonPosition = levelManager.wormPosition;
         //a swallow clone.
         pythonPosition = new Vector3(pythonPosition.x, pythonPosition.y, pythonPosition.z);
     }
@@ -210,7 +207,6 @@ public class enemyController : NetworkBehaviour{
     // kill this npc object.
     public void kill()
     {
-        Debug.Log("I am dead");
         // Create a quaternion with a random rotation in the z-axis.
         Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
