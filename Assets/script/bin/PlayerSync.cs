@@ -7,6 +7,11 @@ public class PlayerSync : NetworkBehaviour {
     [SyncVar] private Vector3 syncPos; //server will automatically transmit this veriable to all clients when it changes with the SyncVar tag
     [SyncVar] private Quaternion syncRotation;
     [SyncVar] bool ability1 = false;
+
+    //worm's depth information , do not need to sync back to client
+    public float syncDepth = 0;
+    public bool syncOnground;
+
     [SerializeField] Transform myTransform;
     [SerializeField] float lerpRate = 5;
     public Rigidbody2D abilityTest1;
@@ -52,6 +57,10 @@ public class PlayerSync : NetworkBehaviour {
     [Command]
     void CmdProvidePositionToServer(Vector3 pos) {
         syncPos = pos;
+
+        GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager.GetComponent<LevelManager>().wormPosition = pos;
+
     }
 
     //only run on server
@@ -63,6 +72,30 @@ public class PlayerSync : NetworkBehaviour {
         syncRotation = rotation;
     }
 
+
+    //only run on server
+    //DO NOT remove the 'Cmd' of the function name
+    //tell the server of the players position
+    [Command]
+    void CmdProvideDepthToServer(float depth)
+    {
+        syncDepth = depth;
+        GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager.GetComponent<LevelManager>().depth = depth;
+    }
+
+    //only run on server
+    //DO NOT remove the 'Cmd' of the function name
+    //tell the server of the players position
+    [Command]
+    void CmdProvideOnGroundToServer(bool onground)
+    {
+        syncOnground = onground;
+        GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager.GetComponent<LevelManager>().wormOnGround= onground;
+    }
+
+
     //only run on clients
     //tell server the position
     [ClientCallback]
@@ -72,6 +105,8 @@ public class PlayerSync : NetworkBehaviour {
         {
             CmdProvidePositionToServer(myTransform.position);
             CmdProvideRotationToServer(myTransform.rotation);
+            CmdProvideDepthToServer(gameObject.transform.Find("head").gameObject.GetComponent< WormController>().depth);
+            CmdProvideOnGroundToServer(gameObject.transform.Find("head").gameObject.GetComponent<WormController>().onground);
         }
     }
 

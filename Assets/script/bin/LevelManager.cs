@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour {
     public GameObject environmentCamera;
     public Vector3 wormPosition;
     public bool wormOnGround;
+    public float depth;
     //public float depth;
 
     public float maxDepth = 100;  // the maximum depth of player

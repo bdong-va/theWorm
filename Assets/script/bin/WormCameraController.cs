@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class WormCameraController : MonoBehaviour {
-    private GameObject player;
+    private GameObject playerObject;
+    private GameObject playerHead;
     // Use this for initialization
     void Start () {
 	
@@ -12,13 +13,15 @@ public class WormCameraController : MonoBehaviour {
     void Update()
     {
         //let camera follow python
-        player = GameObject.FindGameObjectWithTag("Worm");
-        if (player != null)
+        playerObject = GameObject.FindGameObjectWithTag("Worm");
+        playerHead = playerObject.transform.Find("head").gameObject;
+        if (playerHead != null)
         {
             //bool playAlive = player.GetComponent<PlayerController>().playAlive;
             //if (playAlive)
             //{
-                transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z - 100);
+
+                transform.position = new Vector3(playerHead.transform.position.x, playerHead.transform.position.y, playerHead.transform.position.z - 100);
             //}
         }
     }

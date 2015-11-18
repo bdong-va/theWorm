@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class WormController : MonoBehaviour {
-    //TODO remove it
-    public float test;
-
     public float moveSpeed;
     private float verticalSpeed = 1;
     private float xSpeed;
     private float ySpeed;
-    private float depth = 0;   //1 is on the ground, 0 is in shllow underground, -1 is in deep underground
+    public float depth = 0;   //1 is on the ground, 0 is in shllow underground, -1 is in deep underground
     private float minDeapth = -1;
     private float maxDeapth = 1;
     private GameObject levelManager;
