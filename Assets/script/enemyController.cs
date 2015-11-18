@@ -14,7 +14,7 @@ public class enemyController : NetworkBehaviour{
     public bool sensePython;
     public float walkChance;
     public float alertDistance;
-    public bool death;
+    public GameObject bloodStain;
 
     delegate void MyDelegate();
     MyDelegate enemyAction;
@@ -34,6 +34,7 @@ public class enemyController : NetworkBehaviour{
     private Vector3 pythonPosition;
     private float speed;
     private float angle;
+    private bool death;
 
     // Use this for initialization
     public void Start () {
@@ -45,6 +46,7 @@ public class enemyController : NetworkBehaviour{
         angle = 0;
         enemyAction = InPanic;
         levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
+        death = false;
     }
 
     // Update is called once per frame
@@ -204,6 +206,22 @@ public class enemyController : NetworkBehaviour{
         anim.SetFloat("speed", speed);
     }
 
+    // interface for other gameobject
+    // kill this npc object.
+    public void kill()
+    {
+        Debug.Log("I am dead");
+        // Create a quaternion with a random rotation in the z-axis.
+        Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+
+        // Instantiate the bloodstain where the rocket is with the random rotation.
+        Object explosionClone = Instantiate(bloodStain, transform.position, randomRotation);
+
+        death = true;
+    }
+
+    // only run on server
+    // get data from client, store in serer.
     [Command]
     void CmdSyncDataToServer()
     {
@@ -212,6 +230,7 @@ public class enemyController : NetworkBehaviour{
         syncSpeed = speed;
         syncDeath = death;
     }
+
     //only run on clients
     //tell server the position
     [ClientCallback]
