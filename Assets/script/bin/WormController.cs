@@ -17,13 +17,16 @@ public class WormController : MonoBehaviour {
     private Scrollbar healthBar;
     public bool onground=false;
     public bool isActive;
+    private float eatDistance = 1;
+
+
     //worm body fields
     public float speed = 0.1f;
     public float elastifactor = 0.3f; // To stop it from scrunching up when it stops! Higher value = less scrunchy
     public Transform bod1;
     public Transform bod2;
     public Transform bod3;
-
+    
     public float[] pos = { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f }; // *** SYNC VARIABLE OVER NETWORK **
 
     //skills cool down
@@ -182,6 +185,16 @@ public class WormController : MonoBehaviour {
 
         }
 
+        if (Input.GetButtonDown("Fire3"))
+        {
+
+
+            eat();
+
+        }
+
+
+        
         foreach (Skill s in skills)
         {
             if (s.currentCoolDown < s.cooldown)
@@ -215,6 +228,23 @@ public class WormController : MonoBehaviour {
     private void hpLostByTime() {
         this.loseHP(1);
     }
+
+    private void eat()
+    {
+        //TODO add eat player function
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
+        foreach (GameObject npc in npcs)
+        {
+            float distance = Vector3.Distance(transform.position, npc.transform.position);
+            if (distance < eatDistance)
+            {
+                npc.GetComponent<npcController>().kill();
+                loseHP(20);
+                break;
+            }
+        }
+    }
+
 }
 
 

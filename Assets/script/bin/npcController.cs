@@ -34,6 +34,8 @@ public class npcController : NetworkBehaviour{
     private Vector3 wormPosition;
     private float speed;
     private float angle;
+
+    [SyncVar]
     private bool death;
 
     // Use this for initialization
@@ -51,6 +53,11 @@ public class npcController : NetworkBehaviour{
 
     // Update is called once per frame
     public void Update () {
+        if (death) {
+            kill();
+            death = false;
+            Destroy(gameObject);
+        }
         if (isServer)
         {
             checkWorm();
@@ -59,6 +66,7 @@ public class npcController : NetworkBehaviour{
         }
         CmdSyncDataToServer();
         TransmitDataFromServer();
+
     }
     // is enemy in panic?
     private void InPanic()
@@ -138,7 +146,8 @@ public class npcController : NetworkBehaviour{
     {
         if (death)
         {
-            Destroy(gameObject);
+            //kill();
+            //Destroy(gameObject);
         }
         else
         {
