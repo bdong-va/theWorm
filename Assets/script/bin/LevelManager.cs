@@ -19,27 +19,13 @@ public class LevelManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        worm = GameObject.FindGameObjectWithTag("Python");
-        if (worm != null)
-        {
-            wormOnGround = worm.GetComponent<WormController>().onground;
-            wormPosition = worm.transform.position;
-        }
+
         
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //this.setBlur(depth);
-        if (worm != null)
-        {
-            wormOnGround = worm.GetComponent<WormController>().onground;
-            wormPosition = worm.transform.position;
-        }
-        else
-        {
-            worm = GameObject.FindGameObjectWithTag("Python");
-        }
+
     }
 
 

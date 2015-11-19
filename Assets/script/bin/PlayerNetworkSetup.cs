@@ -4,16 +4,12 @@ using UnityEngine.Networking;
 
 public class PlayerNetworkSetup : NetworkBehaviour {
 
-    ////unity function when a player joinin the game
-    //public override void OnStartLocalPlayer()
-    //{
-    //    GetComponent<testPlayer>().enabled = true;
-    //}
 
     void Start() {
 
         if (isLocalPlayer) {
-
+            //check if player is worm or gound player
+            //then enable or disable the controller script
             if (gameObject.transform.Find("head") != null)
             {
                 if (gameObject.transform.Find("head").gameObject.GetComponent<WormController>() != null)
@@ -22,25 +18,21 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                     gameObject.transform.Find("head").gameObject.GetComponent<WormController>().enabled = true;
                     gameObject.transform.Find("head").gameObject.GetComponent<WormBodyController>().enabled = false;
 
-                    //set ground player controller
-                    // GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
-                    // groundPlayer.GetComponent<GroundPlayerBodyController>().enabled = true;
                 }
             }
 
             if (GetComponent<GroundPlayerController>() != null) {
                 GetComponent<GroundPlayerController>().enabled = true;
                 GetComponent<GroundPlayerBodyController>().enabled = false;
-                // GameObject worm = GameObject.FindGameObjectWithTag("Worm");
-                // worm.transform.Find("head").gameObject.GetComponent<WormBodyController>().enabled = true;
+
             }
                 
 
-
+            //check if player is worm or ground player
+            //then enable or disable the camera
+            //TODO: merge this code with above
             string playerName = gameObject.name.ToString();
-
-            //TODO change it to player's real name
-            if (playerName.Equals("python_temp(Clone)"))
+            if (playerName.Equals("worm(Clone)"))
             {
                 Debug.Log("player is worm");
                 GameObject groundPlayerCamera = GameObject.FindGameObjectWithTag("GroundPlayerCamera");

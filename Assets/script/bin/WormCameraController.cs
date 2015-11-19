@@ -12,7 +12,7 @@ public class WormCameraController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //let camera follow python
+        //let camera follow worm
         playerObject = GameObject.FindGameObjectWithTag("Worm");
         playerHead = playerObject.transform.Find("head").gameObject;
         if (playerHead != null)

@@ -14,7 +14,7 @@ public class Network_Custom : NetworkManager{
     [SerializeField]
     GameObject character2;
 
-    private bool isPython = true;
+    private bool isWorm = true;
     // in the Network Manager component, you must put your player prefabs 
     // in the Spawn Info -> Registered Spawnable Prefabs section 
     public short playerPrefabIndex;
@@ -39,12 +39,12 @@ public class Network_Custom : NetworkManager{
     // Instantiate whichever character the player chose and was assigned to chosenCharacter
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
-        if (isPython)
+        if (isWorm)
         {
            // playerPrefab = character1;
             var player1 = (GameObject)GameObject.Instantiate(character1, playerSpawnPos, Quaternion.identity);
             NetworkServer.AddPlayerForConnection(conn, player1, playerControllerId);
-            isPython = false;
+            isWorm = false;
         }
         else
         {

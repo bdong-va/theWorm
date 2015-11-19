@@ -5,72 +5,81 @@ using UnityEngine.Networking;
 /// author: Bo
 /// set decision tree logic system for enemies, or Civilians.
 /// </summary>
-public class EvemyNetworkController : NetworkBehaviour
-{
+public class npcController : NetworkBehaviour{
     public float panicLevelMax;
     public float panicLevelMin;
     public float WalkSpeedMax;
     public float runSpeed;
     public float randomTimeLimit;
-    public bool sensePython;
+    public bool senseWorm;
     public float walkChance;
-
+    public float alertDistance;
+    public GameObject bloodStain;
 
     delegate void MyDelegate();
     MyDelegate enemyAction;
 
+    [SyncVar]
+    private Vector3 syncPos;
+    [SyncVar]
+    private float syncRotation;
+    [SyncVar]
+    private float syncSpeed;
+    [SyncVar]
+    private bool syncDeath;
+    private LevelManager levelManager;
     private Animator anim;
     private float randomTime;
     private float panicLevel;
-    private Vector3 pythonPosition;
+    private Vector3 wormPosition;
     private float speed;
     private float angle;
+    private bool death;
 
     // Use this for initialization
-    public void Start()
-    {
+    public void Start () {
         randomTime = 0;
         panicLevel = 0;
         anim = GetComponent<Animator>();
-        pythonPosition = new Vector3(0f, 0f, 0f);
+        wormPosition = new Vector3(0f, 0f, 0f); 
         speed = 0;
-        angle = Random.Range(0, 360);
-
-        if (isServer)
-        {
-            enemyAction = InPanic;
-        }
+        angle = 0;
+        enemyAction = InPanic;
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
+        death = false;
     }
 
     // Update is called once per frame
-    public void Update()
-    {
+    public void Update () {
         if (isServer)
         {
+            checkWorm();
             makeDecision();
-            enemyAction();
+            enemyAction();   
         }
+        CmdSyncDataToServer();
+        TransmitDataFromServer();
     }
     // is enemy in panic?
     private void InPanic()
     {
         if (panicLevel > panicLevelMin)
         {
-            checkPythonWhenPanic();
+            checkWormWhenPanic();
         }
         else
         {
-            checkPythonWhenNotPanic();
+            checkWormWhenNotPanic();
         }
 
     }
 
-    // seen Python when in panic?
-    private void checkPythonWhenPanic()
+    // seen worm when in panic?
+    private void checkWormWhenPanic()
     {
-        if (sensePython)
+        if (senseWorm)
         {
-            updatePythonPosition();
+            updateWormPosition();
             enemyAction = runForYourLife;
             panicLevel = panicLevelMax;
         }
@@ -80,12 +89,12 @@ public class EvemyNetworkController : NetworkBehaviour
             panicLevel -= Time.deltaTime;
         }
     }
-    // seen python when not in panic?
-    private void checkPythonWhenNotPanic()
+    // seen worm when not in panic?
+    private void checkWormWhenNotPanic()
     {
-        if (sensePython)
+        if (senseWorm)
         {
-            updatePythonPosition();
+            updateWormPosition();
             enemyAction = alert;
             panicLevel += Time.deltaTime;
         }
@@ -124,10 +133,36 @@ public class EvemyNetworkController : NetworkBehaviour
             angle = Random.Range(0, 360);
         }
     }
+    // check if npc is dead
+    private void isDead()
+    {
+        if (death)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            InPanic();
+        }
+    }
+    
     // start the decision make processing.
     private void makeDecision()
     {
-        InPanic();
+        isDead();
+    }
+    
+    private void checkWorm()
+    {
+        float distance = Vector3.Distance(transform.position, levelManager.wormPosition);
+        if (distance < alertDistance && levelManager.wormOnGround)
+        {
+            this.senseWorm = true;
+        }
+        else
+        {
+            this.senseWorm = false;
+        }
     }
     //....................................
     //Enemy Action
@@ -139,27 +174,26 @@ public class EvemyNetworkController : NetworkBehaviour
         speed = 0;
         anim.SetFloat("speed", speed);
     }
-
-    // object will run away from the last position of python in his memory
+    
+    // object will run away from the last position of worm in his memory
     private void runForYourLife()
     {
         speed = runSpeed;
-        angle = -90 + Mathf.Atan2((transform.position.y - pythonPosition.y), (transform.position.x - pythonPosition.x)) * 180 / Mathf.PI;
+        angle = -90 + Mathf.Atan2((transform.position.y - wormPosition.y), (transform.position.x - wormPosition.x)) * 180 / Mathf.PI;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
         transform.position = transform.position + new Vector3(-speed * Mathf.Sin(angle * 2 * Mathf.PI / 360) * Time.deltaTime, speed * Mathf.Cos(angle * 2 * Mathf.PI / 360) * Time.deltaTime, 0f);
-
+        
         anim.SetFloat("speed", speed);
     }
-
-    // pythong appeared again, update memory. adjust steps.
-    private void updatePythonPosition()
+    
+    // worm appeared again, update memory. adjust steps.
+    private void updateWormPosition()
     {
-        Debug.Log("Update Position!");
-        pythonPosition = GameObject.FindGameObjectWithTag("Python").transform.position;
+        wormPosition = levelManager.wormPosition;
         //a swallow clone.
-        pythonPosition = new Vector3(pythonPosition.x, pythonPosition.y, pythonPosition.z);
+        wormPosition = new Vector3(wormPosition.x, wormPosition.y, wormPosition.z);
     }
-
+    
     // nothing happened, just idle and random walk.
     private void executeCasualAction()
     {
@@ -169,4 +203,41 @@ public class EvemyNetworkController : NetworkBehaviour
         anim.SetFloat("speed", speed);
     }
 
+    // interface for other gameobject
+    // kill this npc object.
+    public void kill()
+    {
+        // Create a quaternion with a random rotation in the z-axis.
+        Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+
+        // Instantiate the bloodstain where the rocket is with the random rotation.
+        Object explosionClone = Instantiate(bloodStain, transform.position, randomRotation);
+
+        death = true;
+    }
+
+    // only run on server
+    // get data from client, store in serer.
+    [Command]
+    void CmdSyncDataToServer()
+    {
+        syncPos = transform.position;
+        syncRotation = angle;
+        syncSpeed = speed;
+        syncDeath = death;
+    }
+
+    //only run on clients
+    //tell server the position
+    [ClientCallback]
+    void TransmitDataFromServer()
+    {
+        //transform.position = syncPos;
+        transform.position = Vector3.Lerp(transform.position, syncPos, Time.deltaTime);
+        angle = syncRotation;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        speed = syncSpeed;
+        anim.SetFloat("speed", speed);
+        death = syncDeath;
+    }
 }
