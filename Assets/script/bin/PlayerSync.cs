@@ -129,8 +129,8 @@ public class PlayerSync : NetworkBehaviour {
 
     void UseAbility()
     {
-
-            Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, transform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
+            Debug.Log("test use ability");
+            Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, myTransform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
 
         }
 }

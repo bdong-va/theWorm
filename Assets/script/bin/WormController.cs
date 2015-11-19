@@ -48,6 +48,10 @@ public class WormController : MonoBehaviour {
         Image upImage = skillUp.GetComponent<Image>();
         skills[1].skillIcon = upImage;
 
+        GameObject testAbility = GameObject.FindGameObjectWithTag("testAbility");
+        Image abilityImage = testAbility.GetComponent<Image>();
+        skills[2].skillIcon = abilityImage;
+        
         setupSegPositions();
 
         isActive = gameObject.GetComponent<WormController>().isActiveAndEnabled;
@@ -161,12 +165,22 @@ public class WormController : MonoBehaviour {
             }
         }
 
-        //if (Input.GetButtonDown("Jump"))
-        //{
-        //    //test ability
-        //    ability();
+        if (Input.GetButtonDown("Jump"))
+        {
 
-        //}
+
+            if ((skills[2].currentCoolDown >= skills[2].cooldown))
+            {
+
+                //test ability
+                ability();
+
+                //set skill cooldown
+                skills[2].currentCoolDown = 0;
+
+            }
+
+        }
 
         foreach (Skill s in skills)
         {
@@ -182,7 +196,8 @@ public class WormController : MonoBehaviour {
 
     public void ability()
     {
-        gameObject.GetComponent<PlayerSync>().testAbility();
+        //gameObject.GetComponent<PlayerSync>().testAbility();
+        transform.parent.gameObject.GetComponent<PlayerSync>().testAbility();
     }
 
     //lose hp and set health bar
