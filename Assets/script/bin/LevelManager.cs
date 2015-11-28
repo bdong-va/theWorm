@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.ImageEffects;
+using UnityEngine.Networking;
 
-public class LevelManager : MonoBehaviour {
+public class LevelManager : NetworkBehaviour
+{
 
     public GameObject environmentCamera;
+    [SyncVar]
     public Vector3 wormPosition;
+    [SyncVar]
     public bool wormOnGround;
+    [SyncVar]
     public float depth;
     //public float depth;
 
