@@ -6,7 +6,8 @@ public class PlayerSync : NetworkBehaviour {
 
     [SyncVar] private Vector3 syncPos; //server will automatically transmit this veriable to all clients when it changes with the SyncVar tag
     [SyncVar] private Quaternion syncRotation;
-    [SyncVar] bool ability1 = false;
+    [SyncVar]
+    bool ability1 = false;
 
     //worm's depth information , do not need to sync back to client
     public float syncDepth = 0;
@@ -25,12 +26,13 @@ public class PlayerSync : NetworkBehaviour {
         LerpPosition();
         LerpRotation();
 
-        if (ability1)
-        {
-            UseAbility();
-            ability1 = false;
-            CmdTestAbility(false);
-        }
+        //if (!isServer)
+        //{
+            if (ability1)
+            {
+                LerpAbility1();
+            }
+        //}
     }
 
     //only set position for the player not local
@@ -48,6 +50,18 @@ public class PlayerSync : NetworkBehaviour {
         {
             //set position lerp
             myTransform.rotation = Quaternion.Lerp(myTransform.rotation, syncRotation, Time.deltaTime * lerpRate);
+        }
+    }
+
+
+    //only call ability when the player is not local 
+    void LerpAbility1()
+    {
+        if (!isLocalPlayer)
+        {
+            //set position lerp
+            UseAbility();
+            CmdTestAbility(false);
         }
     }
 
@@ -112,12 +126,20 @@ public class PlayerSync : NetworkBehaviour {
 
     //only run on clients
     //tell server the player use the ability
+
+   //work flow:
+   //player1 use ability, then tell server, set ability = true
+   //server get the notice, in update, if ability = true, then call lerpAbility let player2 use the ability
+   //player2 use the ability, tell server, set ability = false on server
+   //server sync the ability to all clients
     [ClientCallback]
     public  void testAbility() {
         if (isLocalPlayer)
-        {
-            CmdTestAbility(true);
-        }
+        //{
+            //CmdTestAbility(true);
+        //}
+        UseAbility();
+        CmdTestAbility(true);
     }
 
     [Command]
@@ -126,13 +148,13 @@ public class PlayerSync : NetworkBehaviour {
         ability1 = ifUse;
     }
 
-
+   [ClientCallback]
     void UseAbility()
     {
             Debug.Log("test use ability");
             Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, myTransform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
-
-        }
+            ability1 = false;
+    }
 }
 
 
