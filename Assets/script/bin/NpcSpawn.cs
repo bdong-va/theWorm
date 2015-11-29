@@ -7,12 +7,10 @@ using UnityEngine.UI;
 public class NpcSpawn : NetworkBehaviour
 {
     [SerializeField] GameObject NPC;
+    [SerializeField] float NpcNumber;
+    [SerializeField] float Width;
+    [SerializeField] float Height;
 
-    Vector3 position1 = new Vector3(0, 0, 0);
-    Vector3 position2 = new Vector3(1, 0, 0);
-    Vector3 position3 = new Vector3(2, 0, 0);
-    Vector3 position4 = new Vector3(-1, 0, 0);
-    Vector3 position5 = new Vector3(-2, 0, 0);
 
     private ArrayList positionList = new ArrayList();
 
@@ -23,12 +21,12 @@ public class NpcSpawn : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        positionList.Add(position1);
-        positionList.Add(position2);
-        positionList.Add(position3);
-        positionList.Add(position4);
-        positionList.Add(position5);
-
+        for (int i = 0; i < NpcNumber; i++)
+        {
+            Vector3 position = new Vector3(Random.Range(-Width / 2, Width / 2), Random.Range(-Height / 2, Height / 2), 0f);
+            positionList.Add(position);
+        }
+       
         Debug.Log("test");
         spawnAllNPC();
         //for (int i = 0; i < positionList.Count; i++) {

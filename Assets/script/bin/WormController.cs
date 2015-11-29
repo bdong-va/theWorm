@@ -245,7 +245,7 @@ public class WormController : MonoBehaviour {
 
     //worm's hp lose along with time
     private void hpLostByTime() {
-        this.loseHP(30);
+        this.loseHP(2);
     }
 
     private void eat()
