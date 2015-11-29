@@ -66,8 +66,8 @@ public class LevelManager : MonoBehaviour
 
     public void isWormWin(bool isWormWin) {
         this.showGameOver(isWormWin);
-        this.resetPlayer();
         this.resetNPC();
+        this.resetPlayer();       
         this.resetText();
 
     }
