@@ -17,6 +17,12 @@ public class PlayerSync : NetworkBehaviour {
     [SerializeField] float lerpRate = 5;
     public Rigidbody2D abilityTest1;
 
+    [SyncVar]
+    public bool isWormWin = false;
+    [SyncVar]
+    public bool isGroundPlayerWin = false;
+
+
     // Update is called once per frame
     void FixedUpdate () {
         //tell server the new position
@@ -25,21 +31,39 @@ public class PlayerSync : NetworkBehaviour {
         //if not local player, and position changes, then get the new position
         LerpPosition();
         LerpRotation();
-
+        LerpOnGround();
+        
         //if (!isServer)
         //{
             if (ability1)
             {
                 LerpAbility1();
             }
+
+        if (isWormWin) {
+            LerpWromWin();            
+        }
+
+        if (isGroundPlayerWin) {
+            LerpGroundWin();
+        }
+
+        
         //}
     }
 
+
+    void updateLevelManager(bool result) {
+        GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager.GetComponent<LevelManager>().isWormWin(result);
+    }
     //only set position for the player not local
     void LerpPosition() {
         if (!isLocalPlayer) {
             //set position lerp
             myTransform.position = Vector3.Lerp(myTransform.position, syncPos, Time.deltaTime * lerpRate);
+            GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+            levelManager.GetComponent<LevelManager>().wormPosition = syncPos;
         }
     }
 
@@ -62,6 +86,15 @@ public class PlayerSync : NetworkBehaviour {
             //set position lerp
             UseAbility();
             CmdTestAbility(false);
+        }
+    }
+
+    void LerpOnGround() {
+
+        if (!isLocalPlayer)
+        {
+            GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+            levelManager.GetComponent<LevelManager>().wormOnGround = syncOnground;
         }
     }
 
@@ -154,6 +187,120 @@ public class PlayerSync : NetworkBehaviour {
             Debug.Log("test use ability");
             Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, myTransform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
             ability1 = false;
+    }
+
+
+    //////////////////////////////////////////
+
+    //Game OVER
+
+    //////////////////////////////////////////
+
+    void LerpWromWin()
+    {
+        if (!isLocalPlayer)
+        {
+            //set position lerp
+            //myTransform.position = Vector3.Lerp(myTransform.position, syncPos, Time.deltaTime * lerpRate);
+            gameOver(true);
+            CmdWormWin(false);
+            updateLevelManager(true);
+        }
+    }
+
+    void LerpGroundWin()
+    {
+        if (!isLocalPlayer)
+        {
+            //set position lerp
+            //myTransform.position = Vector3.Lerp(myTransform.position, syncPos, Time.deltaTime * lerpRate);
+            gameOver(false);
+            CmdGroundWin(false);
+            updateLevelManager(false);
+        }
+    }
+
+
+    //[ClientCallback]
+    //public void wormWin()
+    //{
+    //    if (isLocalPlayer)
+
+    //        gameOver(true);
+    //        CmdWormWin(true);
+    //}
+
+    //[ClientCallback]
+    //public void groundWin()
+    //{
+    //    if (isLocalPlayer)
+
+    //        gameOver(false);
+    //        CmdGroundWin(true);
+    //}
+
+    [Command]
+    void CmdWormWin(bool isWin)
+    {
+        isWormWin = isWin;
+    }
+
+    [Command]
+    void CmdGroundWin(bool isWin)
+    {
+        isGroundPlayerWin = isWin;
+    }
+
+
+
+    [ClientCallback]
+    public void setWormWin(bool isWormWin)
+    {
+        if (isLocalPlayer)
+            //{
+            //CmdTestAbility(true);
+            //}
+            gameOver(isWormWin);
+            if (isWormWin)
+            {
+
+                CmdWormWin(true);
+                updateLevelManager(true);
+        }
+            else
+            {
+
+                CmdGroundWin(true);
+                updateLevelManager(false);
+        }
+    }
+
+
+    //end game
+    ///<param name="isWormWin">
+    /// ture = worm win
+    /// false = ground player win
+    /// </param>
+    [ClientCallback]
+    public void gameOver(bool isWormWin)
+    {
+
+
+        if (isWormWin)
+        {
+            Debug.Log("worm win");
+            //Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
+            //isWormWin = true;
+        }
+        else
+        {
+            Debug.Log("ground win");
+            //Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
+            //isGroundPlayerWin = true;
+        }
+
+        isWormWin = false;
+        isGroundPlayerWin = false;
     }
 }
 

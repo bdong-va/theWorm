@@ -8,12 +8,14 @@ public class WormController : MonoBehaviour {
     private float verticalSpeed = 1;
     private float xSpeed;
     private float ySpeed;
-    public float depth = 0;   //1 is on the ground, 0 is in shllow underground, -1 is in deep underground
+    public float depth;   //1 is on the ground, 0 is in shllow underground, -1 is in deep underground
+    private float initialDepth = 0;
     private float minDeapth = -1;
     private float maxDeapth = 1;
     private GameObject levelManager;
     private bool testAbility = false;
-    private float hp = 100;
+    private float maxHp = 100;
+    private float hp;
     private Scrollbar healthBar;
     public bool onground=false;
     public bool isActive;
@@ -35,10 +37,17 @@ public class WormController : MonoBehaviour {
     //private bool upCooldown;
     //private bool downCooldown;
 
+    public void reset() {
+        hp = maxHp;
+        depth = initialDepth;
+        onground = false;
+    }
+
     // Use this for initialization
+
     void Start()
     {
-
+        hp = maxHp;
         GameObject healthBarObject = GameObject.FindGameObjectWithTag("HealthBar");
         healthBar = healthBarObject.GetComponent<Scrollbar>();
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
@@ -119,6 +128,12 @@ public class WormController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (depth < 1 || !onground)
+        {
+            onground = false;
+            CancelInvoke("hpLostByTime");
+        }
+
         //down
         if (Input.GetButtonDown("Fire1"))
         {
@@ -220,13 +235,17 @@ public class WormController : MonoBehaviour {
             hp = 0;
         }
 
+        if (hp <= 0) {
+            groundPlayerWin();
+        }
+
         //set health bar value
         healthBar.size = hp / 100f;
     }
 
     //worm's hp lose along with time
     private void hpLostByTime() {
-        this.loseHP(1);
+        this.loseHP(30);
     }
 
     private void eat()
@@ -245,6 +264,17 @@ public class WormController : MonoBehaviour {
         }
     }
 
+    public void wormWin()
+    {
+        //gameObject.GetComponent<PlayerSync>().testAbility();
+        transform.parent.gameObject.GetComponent<PlayerSync>().setWormWin(true);
+    }
+
+    public void groundPlayerWin()
+    {
+        //gameObject.GetComponent<PlayerSync>().testAbility();
+        transform.parent.gameObject.GetComponent<PlayerSync>().setWormWin(false);
+    }
 }
 
 

@@ -2,16 +2,19 @@
 using System.Collections;
 using UnityStandardAssets.ImageEffects;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
-public class LevelManager : NetworkBehaviour
+public class LevelManager : MonoBehaviour
 {
+    public Text groundGameOverText;
+    public Text wormGameOverText;
 
     public GameObject environmentCamera;
-    [SyncVar]
+    //[SyncVar]
     public Vector3 wormPosition;
-    [SyncVar]
+    //[SyncVar]
     public bool wormOnGround;
-    [SyncVar]
+    //[SyncVar]
     public float depth;
     //public float depth;
 
@@ -58,5 +61,56 @@ public class LevelManager : NetworkBehaviour
         environmentCamera.GetComponent<BlurOptimized>().blurSize = blurLevel;
     }
 
+    //show text
+    //reest players and npc
+
+    public void isWormWin(bool isWormWin) {
+        this.showGameOver(isWormWin);
+        this.resetPlayer();
+        this.resetNPC();
+        this.resetText();
+
+    }
+    
+    //show game over text
+    private void showGameOver(bool isWormWin) {
+        if (isWormWin)
+        {
+            wormGameOverText.text = "You Win! \n Game will be rest after 10seconds";
+            groundGameOverText.text = "You Lost! \n Game will be rest after 10seconds";
+        }
+        else if (!isWormWin) {
+            groundGameOverText.text = "You Win! \n Game will be rest after 10seconds";
+            wormGameOverText.text = "You Lost! \n Game will be rest after 10seconds";
+        }
+    }
+
+    private void resetPlayer() {
+
+        //reset worm's position and status
+        GameObject worm= GameObject.FindGameObjectWithTag("Worm");
+        GameObject wormHead = worm.transform.Find("head").gameObject;
+        wormHead.transform.position = new Vector3(0,0,0);
+        wormHead.GetComponent<WormController>().reset();
+
+
+        //reset ground player's position and status
+        //TODO call ji feng bu function
+    }
+
+    //reset npc
+    private void resetNPC() {
+
+        //reset npc
+        GameObject NPCSpawn = GameObject.FindGameObjectWithTag("NPCSpawn");
+        NPCSpawn.GetComponent<NpcSpawn>().spawnAllNPC();
+        
+    }
+
+    //reset game over text
+    private void resetText() {
+        wormGameOverText.text = "";
+        groundGameOverText.text = "";
+    }
     
 }
