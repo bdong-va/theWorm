@@ -250,7 +250,14 @@ public class WormController : MonoBehaviour {
 
     private void eat()
     {
-        //TODO add eat player function
+        // eat player
+        float distanceWithPlayer = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("GroundPlayer").transform.position);
+        if (distanceWithPlayer < eatDistance)
+        {
+            wormWin();
+        }
+
+        //eat npc
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
         foreach (GameObject npc in npcs)
         {
@@ -262,6 +269,7 @@ public class WormController : MonoBehaviour {
                 break;
             }
         }
+        
     }
 
     public void wormWin()

@@ -284,11 +284,11 @@ public class PlayerSync : NetworkBehaviour {
     /// false = ground player win
     /// </param>
     [ClientCallback]
-    public void gameOver(bool isWormWin)
+    public void gameOver(bool isWin)
     {
 
 
-        if (isWormWin)
+        if (isWin)
         {
             Debug.Log("worm win");
             //Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
