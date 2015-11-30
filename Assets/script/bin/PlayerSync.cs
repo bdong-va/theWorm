@@ -15,7 +15,7 @@ public class PlayerSync : NetworkBehaviour {
 
     [SerializeField] Transform myTransform;
     [SerializeField] float lerpRate = 5;
-    public Rigidbody2D abilityTest1;
+    public GameObject abilityTest1;
 
     [SyncVar]
     public bool isWormWin = false;
@@ -184,8 +184,10 @@ public class PlayerSync : NetworkBehaviour {
    [ClientCallback]
     void UseAbility()
     {
-            Debug.Log("test use ability");
-            Rigidbody2D testAbilityInstance = Instantiate(abilityTest1, myTransform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
+            //Debug.Log("test use ability");
+            Vector3 GroundPlayerPosition = GameObject.FindGameObjectWithTag("GroundPlayer").transform.position;
+            Vector3 GroundPlayerPositionWithOffset = GroundPlayerPosition + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0f); 
+            Object testAbilityInstance = Instantiate(abilityTest1, GroundPlayerPositionWithOffset, Quaternion.Euler(new Vector3(0, 0, 0)));
             ability1 = false;
     }
 

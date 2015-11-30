@@ -26,7 +26,7 @@ public class npcController : NetworkBehaviour{
     [SyncVar]
     private float syncSpeed;
     [SyncVar]
-    private bool syncDeath;
+    private bool death;
     private LevelManager levelManager;
     private Animator anim;
     private float randomTime;
@@ -34,9 +34,9 @@ public class npcController : NetworkBehaviour{
     private Vector3 wormPosition;
     private float speed;
     private float angle;
+    private bool fireworkPlayed;
 
-    [SyncVar]
-    private bool death;
+
 
     // Use this for initialization
     public void Start () {
@@ -49,20 +49,27 @@ public class npcController : NetworkBehaviour{
         enemyAction = InPanic;
         levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
         death = false;
+        fireworkPlayed = false;
     }
 
     // Update is called once per frame
     public void Update () {
-        if (death) {
-            kill();
-            death = false;
-            Destroy(gameObject);
-        }
         if (isServer)
         {
             checkWorm();
             makeDecision();
             enemyAction();   
+        }
+        //death check.
+        if (death)
+        {
+            if (!fireworkPlayed)
+            {
+                Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+                Object explosionClone = Instantiate(bloodStain, transform.position, randomRotation);
+                fireworkPlayed = true;
+                Invoke("destroyThis", 1);
+            }
         }
         CmdSyncDataToServer();
         TransmitDataFromServer();
@@ -146,8 +153,15 @@ public class npcController : NetworkBehaviour{
     {
         if (death)
         {
+            if (!fireworkPlayed) {
+                Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+                Object explosionClone = Instantiate(bloodStain, transform.position, randomRotation);
+                fireworkPlayed = true;
+                transform.position = new Vector3(20, 20, 0);
+                Invoke("destroyThis", 1);
+            }
             //kill();
-            //Destroy(gameObject);
+
         }
         else
         {
@@ -216,13 +230,12 @@ public class npcController : NetworkBehaviour{
     // kill this npc object.
     public void kill()
     {
-        // Create a quaternion with a random rotation in the z-axis.
-        Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
-
-        // Instantiate the bloodstain where the rocket is with the random rotation.
-        Object explosionClone = Instantiate(bloodStain, transform.position, randomRotation);
-
         death = true;
+    }
+
+    void destroyThis()
+    {
+        Destroy(gameObject);
     }
 
     // only run on server
@@ -233,7 +246,6 @@ public class npcController : NetworkBehaviour{
         syncPos = transform.position;
         syncRotation = angle;
         syncSpeed = speed;
-        syncDeath = death;
     }
 
     //only run on clients
@@ -247,6 +259,5 @@ public class npcController : NetworkBehaviour{
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
         speed = syncSpeed;
         anim.SetFloat("speed", speed);
-        death = syncDeath;
     }
 }
