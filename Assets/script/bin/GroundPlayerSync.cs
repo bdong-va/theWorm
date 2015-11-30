@@ -11,6 +11,8 @@ public class GroundPlayerSync : NetworkBehaviour
     private Quaternion syncRotation;
     [SyncVar]
     private float syncSpeed;
+    [SyncVar]
+    private bool SwitchyActive;
 
     //[SyncVar]
     //bool ability1 = false;
@@ -43,6 +45,11 @@ public class GroundPlayerSync : NetworkBehaviour
         LerpPosition();
         LerpRotation();
         LerpSpeed();
+        if (SwitchyActive)
+        {
+            switchy();
+            //CmdProvideSwitchyToServer(false);
+        }
     }
     //only set position for the player not local
     void LerpPosition()
@@ -73,6 +80,32 @@ public class GroundPlayerSync : NetworkBehaviour
             gameObject.GetComponent<GroundPlayerBodyController>().currentSpeed = syncSpeed;
         }
     }
+    //only set rotation for the player not local
+    public void activeSwitchy()
+    {
+        SwitchyActive = true;
+    }
+
+    [ClientCallback]
+    void switchy()
+    {
+        Debug.Log("Switchy!");
+        if (!isLocalPlayer)
+        {   // find random NPC
+            Debug.Log("not LocalPlayer!");
+            GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
+            int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
+            // switch position with him.
+            Vector3 positionA = new Vector3( npcs[r].transform.position.x, npcs[r].transform.position.y, npcs[r].transform.position.z);
+            Quaternion rotatationA =  new Quaternion(npcs[r].transform.rotation.x, npcs[r].transform.rotation.y, npcs[r].transform.rotation.z, npcs[r].transform.rotation.w);
+            npcs[r].transform.position = transform.position;
+            npcs[r].transform.rotation = transform.rotation;
+            transform.position = positionA;
+            transform.rotation = rotatationA;
+            SwitchyActive = false;
+        }
+    }
+
 
     //only run on server
     //DO NOT remove the 'Cmd' of the function name
@@ -101,6 +134,15 @@ public class GroundPlayerSync : NetworkBehaviour
         syncSpeed= speed;
     }
 
+    //only run on server
+    //DO NOT remove the 'Cmd' of the function name
+    //tell the server of the players speed
+    [Command]
+    void CmdProvideSwitchyToServer(bool Switchy)
+    {
+        SwitchyActive = Switchy;
+    }
+
     //only run on clients
     //tell server the position
     [ClientCallback]
@@ -113,6 +155,7 @@ public class GroundPlayerSync : NetworkBehaviour
             CmdProvideRotationToServer(myTransform.rotation);
             //set to speed script
             CmdProvideSpeedToServer(gameObject.GetComponent<GroundPlayerController>().currentSpeed);
+            CmdProvideSwitchyToServer(SwitchyActive);
         }
     }
 

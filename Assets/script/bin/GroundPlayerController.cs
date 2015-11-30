@@ -40,18 +40,24 @@ public class GroundPlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (isServer)
-        //{
-            transform.position = transform.position + new Vector3(xSpeed * Time.deltaTime, ySpeed * Time.deltaTime, 0f);
-            if (xSpeed != 0 || ySpeed != 0)
-            {
-                this.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            }
-        //}
-        //CmdSyncDataToServer();
-        //TransmitDataFromServer();
+        // position control
+        transform.position = transform.position + new Vector3(xSpeed * Time.deltaTime, ySpeed * Time.deltaTime, 0f);
+        if (xSpeed != 0 || ySpeed != 0)
+        {
+            this.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+        // ability control
+        if (Input.GetButton("Fire1"))
+        {
+            runSwitchy();
+        }
     }
 
+    void runSwitchy()
+    {
+        GetComponent<GroundPlayerSync>().activeSwitchy();
+
+    }
     //[Command]
     //void CmdSyncDataToServer()
     //{
