@@ -12,7 +12,7 @@ public class GroundPlayerSync : NetworkBehaviour
     [SyncVar]
     private float syncSpeed;
     [SyncVar]
-    private bool SwitchyActive;
+    private bool SwitchyActive=false;
 
     //[SyncVar]
     //bool ability1 = false;
@@ -21,7 +21,7 @@ public class GroundPlayerSync : NetworkBehaviour
     Transform myTransform;
     [SerializeField]
     float lerpRate = 5;
-    public Rigidbody2D abilityTest1;
+    public GameObject flashGrenade;
 
     // Update is called once per frame
     void FixedUpdate()
@@ -91,7 +91,11 @@ public class GroundPlayerSync : NetworkBehaviour
     {
         Debug.Log("Switchy!");
         if (!isLocalPlayer)
-        {   // find random NPC
+        {
+            // flash grenade!
+            Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
+            Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
+            // find random NPC
             Debug.Log("not LocalPlayer!");
             GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
             int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
@@ -102,8 +106,12 @@ public class GroundPlayerSync : NetworkBehaviour
             npcs[r].transform.rotation = transform.rotation;
             transform.position = positionA;
             transform.rotation = rotatationA;
+            CmdProvidePositionToServer(myTransform.position);
+            CmdProvideRotationToServer(myTransform.rotation);
             SwitchyActive = false;
         }
+        CmdProvidePositionToServer(myTransform.position);
+        CmdProvideRotationToServer(myTransform.rotation);
     }
 
 
@@ -151,8 +159,11 @@ public class GroundPlayerSync : NetworkBehaviour
         //only work for local player
         if (isLocalPlayer)
         {
-            CmdProvidePositionToServer(myTransform.position);
-            CmdProvideRotationToServer(myTransform.rotation);
+            if (!SwitchyActive)
+            {
+                CmdProvidePositionToServer(myTransform.position);
+                CmdProvideRotationToServer(myTransform.rotation);
+            }
             //set to speed script
             CmdProvideSpeedToServer(gameObject.GetComponent<GroundPlayerController>().currentSpeed);
             CmdProvideSwitchyToServer(SwitchyActive);
