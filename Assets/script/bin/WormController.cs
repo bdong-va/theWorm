@@ -60,7 +60,7 @@ public class WormController : MonoBehaviour {
         Image upImage = skillUp.GetComponent<Image>();
         skills[1].skillIcon = upImage;
 
-        GameObject testAbility = GameObject.FindGameObjectWithTag("testAbility");
+        GameObject testAbility = GameObject.FindGameObjectWithTag("locate");
         Image abilityImage = testAbility.GetComponent<Image>();
         skills[2].skillIcon = abilityImage;
         

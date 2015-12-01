@@ -65,9 +65,17 @@ public class LevelManager : MonoBehaviour
     //reest players and npc
 
     public void isWormWin(bool isWormWin) {
+        Debug.Log("set worm win");
         this.showGameOver(isWormWin);
+        Invoke("resetAll", 5);
+        //yield return new WaitForSeconds(5);
+        //this.();
+
+    }
+
+    private void resetAll() {
         this.resetNPC();
-        this.resetPlayer();       
+        this.resetPlayer();
         this.resetText();
 
     }
