@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GroundPlayerController : MonoBehaviour
 {
@@ -11,6 +13,10 @@ public class GroundPlayerController : MonoBehaviour
     public float currentSpeed;
     private float angle;
     private Animator anim;
+
+
+    //skills cool down
+    public List<GroundSkill> skills;
     //[SyncVar]
     //private Vector3 syncPos;
     //[SyncVar]
@@ -22,6 +28,15 @@ public class GroundPlayerController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         angle = 0;
+
+
+        GameObject escape = GameObject.FindGameObjectWithTag("escape");
+        Image escapeImage = escape.GetComponent<Image>();
+        skills[0].skillIcon = escapeImage;
+
+        GameObject flashBomb = GameObject.FindGameObjectWithTag("flashBomb");
+        Image flashBombImage = flashBomb.GetComponent<Image>();
+        skills[1].skillIcon = flashBombImage;
     }
 
     void FixedUpdate()
@@ -49,7 +64,42 @@ public class GroundPlayerController : MonoBehaviour
         // ability control
         if (Input.GetButton("Fire1"))
         {
-            runSwitchy();
+            Debug.Log("fire1");
+            if ((skills[0].currentCoolDown >= skills[0].cooldown))
+            {
+
+                //test ability
+                runSwitchy();
+
+                //set skill cooldown
+                skills[0].currentCoolDown = 0;
+
+            }            
+        }
+
+        if (Input.GetButton("Fire2"))
+        {
+            Debug.Log("fire2");
+            if ((skills[1].currentCoolDown >= skills[1].cooldown))
+            {
+
+                //test ability
+                runSwitchy();
+
+                //set skill cooldown
+                skills[1].currentCoolDown = 0;
+
+            }
+        }
+
+        foreach (GroundSkill s in skills)
+        {
+            if (s.currentCoolDown < s.cooldown)
+            {
+                s.currentCoolDown += Time.deltaTime;
+
+                s.skillIcon.fillAmount = s.currentCoolDown / s.cooldown;
+            }
         }
     }
 
@@ -77,4 +127,18 @@ public class GroundPlayerController : MonoBehaviour
     //    anim.SetFloat("speed", currentSpeed);
     //}
 
+}
+
+
+[System.Serializable]
+public class GroundSkill
+{
+    public float cooldown;
+
+    // [HideInInspector]
+    public float currentCoolDown;
+
+
+    [HideInInspector]
+    public Image skillIcon;
 }

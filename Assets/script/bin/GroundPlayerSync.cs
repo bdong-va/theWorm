@@ -12,7 +12,7 @@ public class GroundPlayerSync : NetworkBehaviour
     [SyncVar]
     private float syncSpeed;
     [SyncVar]
-    private bool SwitchyActive=false;
+    private bool SwitchyActive = false;
 
     //[SyncVar]
     //bool ability1 = false;
@@ -40,16 +40,26 @@ public class GroundPlayerSync : NetworkBehaviour
         //}
     }
 
-    void LerpData() {
+    void LerpData()
+    {
         //if not local player, and position changes, then get the new position
-        LerpPosition();
-        LerpRotation();
-        LerpSpeed();
         if (SwitchyActive)
         {
-            switchy();
-            //CmdProvideSwitchyToServer(false);
+            LerpPositionWhenSwitchActive();
+            SwitchyActive = false;
         }
+        else
+        {
+            LerpPosition();
+        }
+
+        LerpRotation();
+        LerpSpeed();
+        //if (SwitchyActive)
+        //{
+        //    switchy();
+        //    //CmdProvideSwitchyToServer(false);
+        //}
     }
     //only set position for the player not local
     void LerpPosition()
@@ -58,6 +68,17 @@ public class GroundPlayerSync : NetworkBehaviour
         {
             //set position lerp
             myTransform.position = Vector3.Lerp(myTransform.position, syncPos, Time.deltaTime * lerpRate);
+        }
+    }
+
+
+    //only set position for the player not local
+    void LerpPositionWhenSwitchActive()
+    {
+        if (!isLocalPlayer)
+        {
+            //set position lerp
+            myTransform.position = syncPos;
         }
     }
 
@@ -81,37 +102,44 @@ public class GroundPlayerSync : NetworkBehaviour
         }
     }
     //only set rotation for the player not local
+    [ClientCallback]
     public void activeSwitchy()
     {
         SwitchyActive = true;
+        switchy();
+        //CmdProvideSwitchyToServer(true);
     }
 
     [ClientCallback]
     void switchy()
     {
         Debug.Log("Switchy!");
-        if (!isLocalPlayer)
-        {
-            // flash grenade!
-            Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
-            Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
-            // find random NPC
-            Debug.Log("not LocalPlayer!");
-            GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
-            int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
-            // switch position with him.
-            Vector3 positionA = new Vector3( npcs[r].transform.position.x, npcs[r].transform.position.y, npcs[r].transform.position.z);
-            Quaternion rotatationA =  new Quaternion(npcs[r].transform.rotation.x, npcs[r].transform.rotation.y, npcs[r].transform.rotation.z, npcs[r].transform.rotation.w);
-            npcs[r].transform.position = transform.position;
-            npcs[r].transform.rotation = transform.rotation;
-            transform.position = positionA;
-            transform.rotation = rotatationA;
-            CmdProvidePositionToServer(myTransform.position);
-            CmdProvideRotationToServer(myTransform.rotation);
-            SwitchyActive = false;
-        }
-        CmdProvidePositionToServer(myTransform.position);
-        CmdProvideRotationToServer(myTransform.rotation);
+        //if (!isLocalPlayer)
+        //{
+        // flash grenade!
+        Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
+        Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
+        // find random NPC
+        Debug.Log("not LocalPlayer!");
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
+        int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
+        // switch position with him.
+        Vector3 positionA = new Vector3(npcs[r].transform.position.x, npcs[r].transform.position.y, npcs[r].transform.position.z);
+        Quaternion rotatationA = new Quaternion(npcs[r].transform.rotation.x, npcs[r].transform.rotation.y, npcs[r].transform.rotation.z, npcs[r].transform.rotation.w);
+        //npcs[r].transform.position = transform.position;
+        //npcs[r].transform.rotation = transform.rotation;
+
+        //remove the npc
+        //npcs[r].GetComponent<npcController>().replaced();
+
+        transform.position = positionA;
+        transform.rotation = rotatationA;
+        //CmdProvidePositionToServer(myTransform.position);
+        //CmdProvideRotationToServer(myTransform.rotation);
+        //SwitchyActive = false;
+        //}
+        //CmdProvidePositionToServer(myTransform.position);
+        //CmdProvideRotationToServer(myTransform.rotation);
     }
 
 
@@ -139,7 +167,7 @@ public class GroundPlayerSync : NetworkBehaviour
     [Command]
     void CmdProvideSpeedToServer(float speed)
     {
-        syncSpeed= speed;
+        syncSpeed = speed;
     }
 
     //only run on server
@@ -159,11 +187,8 @@ public class GroundPlayerSync : NetworkBehaviour
         //only work for local player
         if (isLocalPlayer)
         {
-            if (!SwitchyActive)
-            {
-                CmdProvidePositionToServer(myTransform.position);
-                CmdProvideRotationToServer(myTransform.rotation);
-            }
+            CmdProvidePositionToServer(myTransform.position);
+            CmdProvideRotationToServer(myTransform.rotation);
             //set to speed script
             CmdProvideSpeedToServer(gameObject.GetComponent<GroundPlayerController>().currentSpeed);
             CmdProvideSwitchyToServer(SwitchyActive);
