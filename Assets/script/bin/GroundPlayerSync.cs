@@ -13,7 +13,8 @@ public class GroundPlayerSync : NetworkBehaviour
     private float syncSpeed;
     [SyncVar]
     private bool SwitchyActive = false;
-
+    [SyncVar]
+    bool flash = false;
     //[SyncVar]
     //bool ability1 = false;
 
@@ -21,6 +22,9 @@ public class GroundPlayerSync : NetworkBehaviour
     Transform myTransform;
     [SerializeField]
     float lerpRate = 5;
+
+
+
     public GameObject flashGrenade;
 
     // Update is called once per frame
@@ -32,13 +36,25 @@ public class GroundPlayerSync : NetworkBehaviour
         //if not local player, and position changes, then get the new position
         LerpData();
 
-        //if (ability1)
-        //{
-        //    UseAbility();
-        //    ability1 = false;
-        //    CmdTestAbility(false);
-        //}
+        if (flash)
+        {
+            LerpFlashBomb();
+        }
     }
+
+
+    //only call ability when the player is not local 
+    void LerpFlashBomb()
+    {
+        if (!isLocalPlayer)
+        {
+            //set position lerp
+            flashBomb();
+            CmdFlash(false);
+        }
+    }
+
+
 
     void LerpData()
     {
@@ -116,9 +132,7 @@ public class GroundPlayerSync : NetworkBehaviour
         Debug.Log("Switchy!");
         //if (!isLocalPlayer)
         //{
-        // flash grenade!
-        Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
-        Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
+
         // find random NPC
         Debug.Log("not LocalPlayer!");
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
@@ -151,6 +165,9 @@ public class GroundPlayerSync : NetworkBehaviour
     {
         syncPos = pos;
     }
+
+
+
 
     //only run on server
     //DO NOT remove the 'Cmd' of the function name
@@ -194,6 +211,33 @@ public class GroundPlayerSync : NetworkBehaviour
             CmdProvideSwitchyToServer(SwitchyActive);
         }
     }
+
+    [ClientCallback]
+    public void useFlashBomb()
+    {
+        if (isLocalPlayer) {
+            flashBomb();
+        }        
+        CmdFlash(true);
+
+    }
+
+    [Command]
+    void CmdFlash(bool ifUse)
+    {
+        flash = ifUse;
+    }
+
+
+    [ClientCallback]
+    void flashBomb()
+    {
+        // flash grenade!
+        Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
+        Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
+        flash = false;
+    }
+
 
     ////only run on clients
     ////tell server the player use the ability

@@ -84,7 +84,7 @@ public class GroundPlayerController : MonoBehaviour
             {
 
                 //test ability
-                runSwitchy();
+                falshBomb();
 
                 //set skill cooldown
                 skills[1].currentCoolDown = 0;
@@ -108,6 +108,13 @@ public class GroundPlayerController : MonoBehaviour
         GetComponent<GroundPlayerSync>().activeSwitchy();
 
     }
+
+    void falshBomb()
+    {
+        GetComponent<GroundPlayerSync>().useFlashBomb();
+
+    }
+
     //[Command]
     //void CmdSyncDataToServer()
     //{
