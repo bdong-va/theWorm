@@ -15,6 +15,7 @@ public class WormController : MonoBehaviour {
     private GameObject levelManager;
     private bool testAbility = false;
     private float maxHp = 100;
+    // private float maxHpAfterReset = 102; //after reset, 
     private float hp;
     private Scrollbar healthBar;
     public bool onground=false;
@@ -38,7 +39,8 @@ public class WormController : MonoBehaviour {
     //private bool downCooldown;
 
     public void reset() {
-        hp = maxHp;
+        hp = maxHp + loseHpByTime; //becasue after reset, the hp bar won't update before the HP change
+        loseHP(loseHpByTime);
         depth = initialDepth;
         onground = false;
     }
