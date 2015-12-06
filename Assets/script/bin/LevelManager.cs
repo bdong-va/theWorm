@@ -123,14 +123,36 @@ public class LevelManager : MonoBehaviour
 
     private void setWormLayer() {
         GameObject worm = GameObject.FindGameObjectWithTag("Worm");
+        Transform head = worm.transform.Find("head");
+        
+
         if (depth < 1)
         {
+            head.gameObject.layer = 14;
+            foreach (Transform child in head)
+            {
+                if (null == child)
+                {
+                    continue;
+                }
+                child.gameObject.layer = 14;
+            }
+
             //worm.layer = 14;
             //worm.GetComponent<Renderer>().enabled = false;
         }
         else {
             //worm.layer = 13;
-            //worm.GetComponent<Renderer>().enabled = true;
+
+            head.gameObject.layer = 13;
+            foreach (Transform child in head)
+            {
+                if (null == child)
+                {
+                    continue;
+                }
+                child.gameObject.layer = 13;
+            }
         }
         
     }
