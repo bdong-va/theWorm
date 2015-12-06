@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public GameObject wormColorBackground;
     public Text groundGameOverText;
     public Text wormGameOverText;
 
@@ -23,17 +24,33 @@ public class LevelManager : MonoBehaviour
     private float maxBlurLevel = 5;  // the maximum blur level
     private int hideCameraZ = 1;
     private GameObject worm;
-
+    private GameObject wormBackground;
 
     // Use this for initialization
     void Start () {
-        
+        wormBackground = Instantiate(wormColorBackground, new Vector3(0f,0f,0f), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
         setWormLayer();
+        changeWormBackgroundColor();
+    }
+
+    void changeWormBackgroundColor()
+    {
+        if (depth == -1) {
+            wormBackground.GetComponent<SpriteRenderer>().color =Color.Lerp(wormBackground.GetComponent<SpriteRenderer>().color, new Color(27f/255, 37f/255, 26f/255),Time.deltaTime);
+        }
+        else if (depth == 0)
+        {
+            wormBackground.GetComponent<SpriteRenderer>().color = Color.Lerp(wormBackground.GetComponent<SpriteRenderer>().color, new Color(72f/255, 98f/255, 69f/255), Time.deltaTime);
+        }
+        else
+        {
+            wormBackground.GetComponent<SpriteRenderer>().color = Color.Lerp(wormBackground.GetComponent<SpriteRenderer>().color, new Color(91f/255, 94f/255, 144f/255), Time.deltaTime);
+        }
     }
 
 
