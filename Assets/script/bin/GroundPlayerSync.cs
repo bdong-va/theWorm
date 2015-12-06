@@ -142,12 +142,15 @@ public class GroundPlayerSync : NetworkBehaviour
         Quaternion rotatationA = new Quaternion(npcs[r].transform.rotation.x, npcs[r].transform.rotation.y, npcs[r].transform.rotation.z, npcs[r].transform.rotation.w);
         //npcs[r].transform.position = transform.position;
         //npcs[r].transform.rotation = transform.rotation;
-
+        //Vector3 positionB = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        //Quaternion rotationB = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
         //remove the npc
         //npcs[r].GetComponent<npcController>().replaced();
-
         transform.position = positionA;
         transform.rotation = rotatationA;
+
+        //GameObject.FindGameObjectWithTag("NPCSpawn").GetComponent<NpcSpawn>().spawnNPC(positionB, rotationB);
+        
         //CmdProvidePositionToServer(myTransform.position);
         //CmdProvideRotationToServer(myTransform.rotation);
         //SwitchyActive = false;

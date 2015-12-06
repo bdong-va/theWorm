@@ -61,4 +61,10 @@ public class NpcSpawn : NetworkBehaviour
         GameObject npc = GameObject.Instantiate(NPC, position, Quaternion.identity) as GameObject;
         NetworkServer.Spawn(npc);
     }
+
+   public void spawnNPC(Vector3 position , Quaternion rotation)
+    {
+        GameObject npc = GameObject.Instantiate(NPC, position, rotation) as GameObject;
+        NetworkServer.Spawn(npc);
+    }
 }
