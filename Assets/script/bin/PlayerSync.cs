@@ -10,7 +10,9 @@ public class PlayerSync : NetworkBehaviour {
     bool ability1 = false;
 
     //worm's depth information , do not need to sync back to client
+    [SyncVar]
     public float syncDepth = 0;
+    [SyncVar]
     public bool syncOnground;
 
     [SerializeField] Transform myTransform;
@@ -32,10 +34,11 @@ public class PlayerSync : NetworkBehaviour {
         LerpPosition();
         LerpRotation();
         LerpOnGround();
-        
+        //LerpDepth();
+
         //if (!isServer)
         //{
-            if (ability1)
+        if (ability1)
             {
                 LerpAbility1();
             }
@@ -64,6 +67,7 @@ public class PlayerSync : NetworkBehaviour {
             myTransform.position = Vector3.Lerp(myTransform.position, syncPos, Time.deltaTime * lerpRate);
             GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
             levelManager.GetComponent<LevelManager>().wormPosition = syncPos;
+            levelManager.GetComponent<LevelManager>().depth = syncDepth;
         }
     }
 
@@ -77,6 +81,16 @@ public class PlayerSync : NetworkBehaviour {
         }
     }
 
+
+    //only set rotation for the player not local
+    void LerpDepth()
+    {
+        if (!isLocalPlayer)
+        {
+            GameObject levelManager = GameObject.FindGameObjectWithTag("LevelManager");
+            levelManager.GetComponent<LevelManager>().depth = syncDepth;
+        }
+    }
 
     //only call ability when the player is not local 
     void LerpAbility1()
@@ -152,7 +166,8 @@ public class PlayerSync : NetworkBehaviour {
         {
             CmdProvidePositionToServer(myTransform.position);
             CmdProvideRotationToServer(myTransform.rotation);
-            CmdProvideDepthToServer(gameObject.transform.Find("head").gameObject.GetComponent< WormController>().depth);
+            CmdProvideDepthToServer(gameObject.transform.Find("head").gameObject.GetComponent<WormController>().depth);
+            Debug.Log("depth = " + gameObject.transform.Find("head").gameObject.GetComponent<WormController>().depth);
             CmdProvideOnGroundToServer(gameObject.transform.Find("head").gameObject.GetComponent<WormController>().onground);
         }
     }

@@ -27,13 +27,13 @@ public class LevelManager : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-
         
-	}
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
-
+        setWormLayer();
     }
 
 
@@ -120,5 +120,18 @@ public class LevelManager : MonoBehaviour
         wormGameOverText.text = "";
         groundGameOverText.text = "";
     }
-    
+
+    private void setWormLayer() {
+        GameObject worm = GameObject.FindGameObjectWithTag("Worm");
+        if (depth < 1)
+        {
+            //worm.layer = 14;
+            //worm.GetComponent<Renderer>().enabled = false;
+        }
+        else {
+            //worm.layer = 13;
+            //worm.GetComponent<Renderer>().enabled = true;
+        }
+        
+    }
 }
