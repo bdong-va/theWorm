@@ -20,7 +20,7 @@ public class WormController : MonoBehaviour {
     public bool onground=false;
     public bool isActive;
     private float eatDistance = 1;
-
+    public float loseHpByTime = 2;
 
     //worm body fields
     public float speed = 0.1f;
@@ -245,7 +245,7 @@ public class WormController : MonoBehaviour {
 
     //worm's hp lose along with time
     private void hpLostByTime() {
-        this.loseHP(2);
+        this.loseHP(loseHpByTime);
     }
 
     private void eat()
