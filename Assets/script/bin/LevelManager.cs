@@ -65,9 +65,13 @@ public class LevelManager : MonoBehaviour
         //convert depth to 0 - 10
         //float blurLevel = depth /(maxDepth /maxBlur)/ maxBlur * 10;  
         blurLevel = depth / maxBlurDepth * maxBlurLevel;
-        if (depth <= -1) {
-            blurLevel = 10;
-        } else {
+        if (depth <= -1)
+        {
+            blurLevel = 8;
+        }
+        else if(depth == 0){
+            blurLevel = 3;
+        }else {
             blurLevel = 0;
         }
 

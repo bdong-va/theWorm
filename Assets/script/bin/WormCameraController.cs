@@ -14,6 +14,7 @@ public class WormCameraController : MonoBehaviour {
     {
         //let camera follow worm
         playerObject = GameObject.FindGameObjectWithTag("Worm");
+
         playerHead = playerObject.transform.Find("head").gameObject;
         if (playerHead != null)
         {
