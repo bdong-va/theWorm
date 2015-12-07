@@ -21,6 +21,9 @@ public class IndicatorGroundPlayer : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        // update worm depth for indicator.
+        this.gameObject.GetComponent<Animator>().SetFloat("depth", theLevelManager.depth);
+        // rotate for worm position.
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
         if (distance < safeDistance)
         {
