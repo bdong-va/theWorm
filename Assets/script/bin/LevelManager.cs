@@ -67,7 +67,7 @@ public class LevelManager : MonoBehaviour
         blurLevel = depth / maxBlurDepth * maxBlurLevel;
         if (depth <= -1)
         {
-            blurLevel = 8;
+            blurLevel = 10;
         }
         else if(depth == 0){
             blurLevel = 3;
@@ -90,6 +90,11 @@ public class LevelManager : MonoBehaviour
         this.showGameOver(isWormWin);
         Invoke("resetGroundPlayer", 5);
         Invoke("resetAll", 8);
+
+        //stop  worm lose hp
+        GameObject worm = GameObject.FindGameObjectWithTag("Worm");
+        GameObject wormHead = worm.transform.Find("head").gameObject;
+        wormHead.GetComponent<WormController>().gameOver();
         //yield return new WaitForSeconds(5);
         //this.();
 
@@ -99,14 +104,21 @@ public class LevelManager : MonoBehaviour
         this.resetNPC();
         this.resetPlayer();
         this.resetText();
+        this.resetBlur();
 
     }
 
+    private void resetBlur() {
+        //set blur to depth 0
+        this.setBlur(0);
+
+    }
     private void resetGroundPlayer() {
         //reset ground player's position and status
         GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
 
         groundPlayer.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
+        groundPlayer.GetComponent<GroundPlayerController>().reset();
     }
 
     //show game over text

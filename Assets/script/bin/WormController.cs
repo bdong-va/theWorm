@@ -22,7 +22,7 @@ public class WormController : MonoBehaviour {
     public bool isActive;
     private float eatDistance = 1;
     public float loseHpByTime = 2f;
-
+    private bool isGamePlaying;
     //worm body fields
     public float speed = 0.1f;
     public float elastifactor = 0.3f; // To stop it from scrunching up when it stops! Higher value = less scrunchy
@@ -48,12 +48,15 @@ public class WormController : MonoBehaviour {
         //loseHP(loseHpByTime);
         depth = initialDepth;
         onground = false;
+
+        isGamePlaying = true;
     }
 
     // Use this for initialization
 
     void Start()
     {
+        isGamePlaying = true;
         hp = maxHp;
         GameObject healthBarObject = GameObject.FindGameObjectWithTag("HealthBar");
         healthBar = healthBarObject.GetComponent<Scrollbar>();
@@ -124,6 +127,9 @@ public class WormController : MonoBehaviour {
         pos[7] = bod3.position.y;
     }
 
+    public void gameOver() {
+        isGamePlaying = false;
+    }
 
     void updateWormSegPositions()
     {
@@ -237,17 +243,22 @@ public class WormController : MonoBehaviour {
 
     //lose hp and set health bar
     public void loseHP(float damage) {
-        hp = hp - damage;
-        if (hp < 0) {
-            hp = 0;
-        }
+        if (isGamePlaying)
+        {
+            hp = hp - damage;
+            if (hp < 0)
+            {
+                hp = 0;
+            }
 
-        if (hp <= 0) {
-            groundPlayerWin();
-        }
+            if (hp <= 0)
+            {
+                groundPlayerWin();
+            }
 
-        //set health bar value
-        healthBar.size = hp / 100f;
+            //set health bar value
+            healthBar.size = hp / 100f;
+        }
     }
 
     //worm's hp lose along with time

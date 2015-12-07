@@ -37,6 +37,11 @@ public class GroundPlayerController : MonoBehaviour
         GameObject flashBomb = GameObject.FindGameObjectWithTag("flashBomb");
         Image flashBombImage = flashBomb.GetComponent<Image>();
         skills[1].skillIcon = flashBombImage;
+
+        foreach (GroundSkill s in skills)
+        {
+            s.currentCoolDown = s.cooldown;
+        }
     }
 
     void FixedUpdate()
@@ -113,6 +118,16 @@ public class GroundPlayerController : MonoBehaviour
     {
         GetComponent<GroundPlayerSync>().useFlashBomb();
 
+    }
+
+    //reset after game over
+    public void reset() {
+        //reset cool down
+        foreach (GroundSkill s in skills)
+        {
+            //minus 0.1 so that currentCoolDown < coolDown, then in update it will change the icon cooldown
+            s.currentCoolDown = s.cooldown - 0.1f;
+        }
     }
 
     //[Command]
