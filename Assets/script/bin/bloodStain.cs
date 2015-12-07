@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class bloodStain : MonoBehaviour {
-
+    public float startTime;
     public float duration;
 
     private float currentFadeTime;
@@ -11,18 +11,24 @@ public class bloodStain : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Invoke("remove",duration);
-        currentFadeTime = duration;
+        Invoke("remove",duration+startTime);
+        currentFadeTime = duration+startTime;
         rend = GetComponent<SpriteRenderer>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        currentFadeTime -= Time.deltaTime;
-        currentFadeLevel = currentFadeTime / duration;
-        rend.material.color = new Color(1.0f, 1.0f, 1.0f, currentFadeLevel);
+        if (currentFadeTime > 0) {
+            currentFadeTime -= Time.deltaTime;
+        }
 
-	}
+        if (currentFadeTime < duration)
+        {
+            currentFadeLevel = currentFadeTime / (duration+Mathf.Epsilon);
+            rend.material.color = new Color(1.0f, 1.0f, 1.0f, currentFadeLevel);
+        }
+
+    }
 
     void remove()
     {
