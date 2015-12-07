@@ -88,7 +88,8 @@ public class LevelManager : MonoBehaviour
     public void isWormWin(bool isWormWin) {
         Debug.Log("set worm win");
         this.showGameOver(isWormWin);
-        Invoke("resetAll", 5);
+        Invoke("resetGroundPlayer", 5);
+        Invoke("resetAll", 8);
         //yield return new WaitForSeconds(5);
         //this.();
 
@@ -100,9 +101,20 @@ public class LevelManager : MonoBehaviour
         this.resetText();
 
     }
-    
+
+    private void resetGroundPlayer() {
+        //reset ground player's position and status
+        GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
+
+        groundPlayer.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
+    }
+
     //show game over text
     private void showGameOver(bool isWormWin) {
+        GameObject worm = GameObject.FindGameObjectWithTag("Worm");
+        GameObject wormHead = worm.transform.Find("head").gameObject;
+        wormHead.transform.position = new Vector3(30, 30, 0);
+        Instantiate(whiteScreen, new Vector3(30,30,0), Quaternion.Euler(new Vector3(0, 0, 0)));
         if (isWormWin)
         {
             wormGameOverText.text = "You Win! \n Game will be rest after 10seconds";
@@ -121,12 +133,6 @@ public class LevelManager : MonoBehaviour
         GameObject wormHead = worm.transform.Find("head").gameObject;
         wormHead.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
         wormHead.GetComponent<WormController>().reset();
-
-
-        //reset ground player's position and status
-        GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
-        Instantiate(whiteScreen, wormHead.transform.position, Quaternion.Euler(new Vector3(0, 0, 0)));
-        groundPlayer.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
 
     }
 
