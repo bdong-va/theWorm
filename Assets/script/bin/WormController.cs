@@ -21,7 +21,7 @@ public class WormController : MonoBehaviour {
     public bool onground=false;
     public bool isActive;
     private float eatDistance = 1;
-    public float loseHpByTime = 2;
+    public float loseHpByTime = 2f;
 
     //worm body fields
     public float speed = 0.1f;
@@ -39,8 +39,13 @@ public class WormController : MonoBehaviour {
     //private bool downCooldown;
 
     public void reset() {
-        hp = maxHp + loseHpByTime; //becasue after reset, the hp bar won't update before the HP change
-        loseHP(loseHpByTime);
+        //hp = maxHp + loseHpByTime; //becasue after reset, the hp bar won't update before the HP change
+        hp = maxHp;
+        //set health bar value
+        GameObject healthBarObject = GameObject.FindGameObjectWithTag("HealthBar");
+        healthBar = healthBarObject.GetComponent<Scrollbar>();
+        healthBar.size = 1f;
+        //loseHP(loseHpByTime);
         depth = initialDepth;
         onground = false;
     }

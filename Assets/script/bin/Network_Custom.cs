@@ -74,14 +74,14 @@ public class Network_Custom : NetworkManager{
         if (isWorm)
         {
            // playerPrefab = character1;
-            var player1 = (GameObject)GameObject.Instantiate(character1, playerSpawnPos, Quaternion.identity);
+            var player1 = (GameObject)GameObject.Instantiate(character1, new Vector3(Random.Range(-15,15), Random.Range(-9,9),0f), Quaternion.identity);
             NetworkServer.AddPlayerForConnection(conn, player1, playerControllerId);
             isWorm = false;
         }
         else
         {
             //playerPrefab = character2;
-            var player2 = (GameObject)GameObject.Instantiate(character2, playerSpawnPos, Quaternion.identity);
+            var player2 = (GameObject)GameObject.Instantiate(character2, new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f), Quaternion.identity);
             NetworkServer.AddPlayerForConnection(conn, player2, playerControllerId);
 
         }

@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public GameObject wormColorBackground;
     public Text groundGameOverText;
     public Text wormGameOverText;
-
+    public GameObject whiteScreen;
     public GameObject environmentCamera;
     //[SyncVar]
     public Vector3 wormPosition;
@@ -119,12 +119,15 @@ public class LevelManager : MonoBehaviour
         //reset worm's position and status
         GameObject worm= GameObject.FindGameObjectWithTag("Worm");
         GameObject wormHead = worm.transform.Find("head").gameObject;
-        wormHead.transform.position = new Vector3(0,0,0);
+        wormHead.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
         wormHead.GetComponent<WormController>().reset();
 
 
         //reset ground player's position and status
-        //TODO call ji feng bu function
+        GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");
+        Instantiate(whiteScreen, wormHead.transform.position, Quaternion.Euler(new Vector3(0, 0, 0)));
+        groundPlayer.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(-9, 9), 0f);
+
     }
 
     //reset npc
@@ -138,6 +141,7 @@ public class LevelManager : MonoBehaviour
 
     //reset game over text
     private void resetText() {
+        Debug.Log("reset text");
         wormGameOverText.text = "";
         groundGameOverText.text = "";
     }
