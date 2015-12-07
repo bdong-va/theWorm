@@ -236,7 +236,7 @@ public class GroundPlayerSync : NetworkBehaviour
     void flashBomb()
     {
         // flash grenade!
-        Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.position;
+        Vector3 wormPosition = GameObject.FindGameObjectWithTag("Worm").transform.Find("head").gameObject.transform.position;
         Instantiate(flashGrenade, wormPosition, Quaternion.Euler(new Vector3(0, 0, 0)));
         flash = false;
     }
