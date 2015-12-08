@@ -60,6 +60,7 @@ public class WormController : MonoBehaviour {
         InvokeRepeating("hpLostByTime", 1, 1);
 
         //reset blur
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager");
         levelManager.GetComponent<LevelManager>().setBlur(this.depth);
     }
 
@@ -232,7 +233,7 @@ public class WormController : MonoBehaviour {
             bool eatSuccess = false;
             if ((skills[3].currentCoolDown >= skills[3].cooldown))
             {
-                eat();
+                eatSuccess = eat();
                 //set skill cooldown
 
                 if (eatSuccess) {
