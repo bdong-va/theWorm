@@ -62,6 +62,13 @@ public class WormController : MonoBehaviour {
         //reset blur
         levelManager = GameObject.FindGameObjectWithTag("LevelManager");
         levelManager.GetComponent<LevelManager>().setBlur(this.depth);
+
+        //reset cool down
+        foreach (Skill s in skills)
+        {
+            //minus 0.1 so that currentCoolDown < coolDown, then in update it will change the icon cooldown
+            s.currentCoolDown = s.cooldown - 0.1f;
+        }
     }
 
     // Use this for initialization
