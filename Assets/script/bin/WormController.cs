@@ -9,20 +9,25 @@ public class WormController : MonoBehaviour {
     private float xSpeed;
     private float ySpeed;
     public float depth;   //1 is on the ground, 0 is in shllow underground, -1 is in deep underground
-    private float initialDepth = 0;
+    private float initialDepth = -1;
     private float minDeapth = -1;
     private float maxDeapth = 1;
     private GameObject levelManager;
     private bool testAbility = false;
-    private float maxHp = 100;
+    private float maxHp = 200;
     // private float maxHpAfterReset = 102; //after reset, 
     private float hp;
     private Scrollbar healthBar;
     public bool onground=false;
     public bool isActive;
     private float eatDistance = 1;
-    public float loseHpByTime = 2f;
+    public float loseHpByTimeOnground = 2f;
+    public float loseHpByTimeUnderGround = 1f;
+
     private bool isGamePlaying;
+    public float eatNpcLost = 30;
+
+
     //worm body fields
     public float speed = 0.1f;
     public float elastifactor = 0.3f; // To stop it from scrunching up when it stops! Higher value = less scrunchy
@@ -50,12 +55,19 @@ public class WormController : MonoBehaviour {
         onground = false;
 
         isGamePlaying = true;
+
+        //reset lost hp
+        InvokeRepeating("hpLostByTime", 1, 1);
+
+        //reset blur
+        levelManager.GetComponent<LevelManager>().setBlur(this.depth);
     }
 
     // Use this for initialization
 
     void Start()
     {
+        
         isGamePlaying = true;
         hp = maxHp;
         GameObject healthBarObject = GameObject.FindGameObjectWithTag("HealthBar");
@@ -73,10 +85,17 @@ public class WormController : MonoBehaviour {
         GameObject testAbility = GameObject.FindGameObjectWithTag("locate");
         Image abilityImage = testAbility.GetComponent<Image>();
         skills[2].skillIcon = abilityImage;
-        
+
+        GameObject eatAbility = GameObject.FindGameObjectWithTag("eat");
+        Image eatImage = eatAbility.GetComponent<Image>();
+        skills[3].skillIcon = eatImage;
+
         setupSegPositions();
 
         isActive = gameObject.GetComponent<WormController>().isActiveAndEnabled;
+        //InvokeRepeating("hpLostByTime", 1, 1);
+
+        reset();
     }
 
     void FixedUpdate()
@@ -129,6 +148,9 @@ public class WormController : MonoBehaviour {
 
     public void gameOver() {
         isGamePlaying = false;
+        //cancel lost hp when game over
+        CancelInvoke("hpLostByTime");
+
     }
 
     void updateWormSegPositions()
@@ -144,7 +166,7 @@ public class WormController : MonoBehaviour {
         if (depth < 1 || !onground)
         {
             onground = false;
-            CancelInvoke("hpLostByTime");
+            //CancelInvoke("hpLostByTime");
         }
 
         //down
@@ -160,14 +182,6 @@ public class WormController : MonoBehaviour {
                 //set skill cooldown
                 skills[0].currentCoolDown = 0;
 
-            }
-
-
-            //if on the ground, lost health
-            if (depth < 1)
-            {
-                onground = false;
-                CancelInvoke("hpLostByTime");
             }
         }
 
@@ -192,7 +206,7 @@ public class WormController : MonoBehaviour {
             if (depth == 1 && !onground)
             {
                 onground = true;
-                InvokeRepeating("hpLostByTime", 1, 1);
+                
             }
         }
 
@@ -215,10 +229,17 @@ public class WormController : MonoBehaviour {
 
         if (Input.GetButtonDown("Fire3"))
         {
+            bool eatSuccess = false;
+            if ((skills[3].currentCoolDown >= skills[3].cooldown))
+            {
+                eat();
+                //set skill cooldown
 
-
-            eat();
-
+                if (eatSuccess) {
+                    skills[3].currentCoolDown = 0;
+                }
+                
+            }         
         }
 
 
@@ -257,22 +278,33 @@ public class WormController : MonoBehaviour {
             }
 
             //set health bar value
-            healthBar.size = hp / 100f;
+            healthBar.size = hp / maxHp;
         }
     }
 
     //worm's hp lose along with time
     private void hpLostByTime() {
-        this.loseHP(loseHpByTime);
+        if (depth == 1)
+        {
+            //onground
+            this.loseHP(loseHpByTimeOnground);
+        }
+        else if(depth == 0)
+        {
+            this.loseHP(loseHpByTimeUnderGround);
+        }
+        
     }
 
-    private void eat()
+    private bool eat()
     {
+        bool eatSuccess = false;
         // eat player
         float distanceWithPlayer = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("GroundPlayer").transform.position);
         if (distanceWithPlayer < eatDistance)
         {
-            wormWin();
+            eatSuccess = true;
+            wormWin();            
         }
 
         //eat npc
@@ -283,11 +315,13 @@ public class WormController : MonoBehaviour {
             if (distance < eatDistance)
             {
                 npc.GetComponent<npcController>().kill();
-                loseHP(20);
+                loseHP(eatNpcLost);
+                eatSuccess = true;
                 break;
             }
         }
-        
+
+        return eatSuccess;
     }
 
     public void wormWin()

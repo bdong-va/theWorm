@@ -15,6 +15,8 @@ public class GroundPlayerSync : NetworkBehaviour
     private bool SwitchyActive = false;
     [SyncVar]
     bool flash = false;
+
+    public float jumpDistance = 25;
     //[SyncVar]
     //bool ability1 = false;
 
@@ -136,27 +138,28 @@ public class GroundPlayerSync : NetworkBehaviour
         // find random NPC
         Debug.Log("not LocalPlayer!");
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("EnemyAnim");
-        int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
+        GameObject farestNPC = null;
+        foreach (GameObject npc in npcs)
+        {
+            if (Vector3.Distance(npc.transform.position, transform.position) > jumpDistance)
+            {
+                farestNPC = npc;
+                break;
+            }
+        }
+
+        if (farestNPC == null)
+        {
+            int r = (int)Mathf.Floor(Random.Range(0, npcs.Length));
+            farestNPC = npcs[r];
+        }
+        
         // switch position with him.
-        Vector3 positionA = new Vector3(npcs[r].transform.position.x, npcs[r].transform.position.y, npcs[r].transform.position.z);
-        Quaternion rotatationA = new Quaternion(npcs[r].transform.rotation.x, npcs[r].transform.rotation.y, npcs[r].transform.rotation.z, npcs[r].transform.rotation.w);
-        //npcs[r].transform.position = transform.position;
-        //npcs[r].transform.rotation = transform.rotation;
-        //Vector3 positionB = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        //Quaternion rotationB = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
-        //remove the npc
-        //npcs[r].GetComponent<npcController>().replaced();
+        Vector3 positionA = new Vector3(farestNPC.transform.position.x, farestNPC.transform.position.y, farestNPC.transform.position.z);
+        Quaternion rotatationA = new Quaternion(farestNPC.transform.rotation.x, farestNPC.transform.rotation.y, farestNPC.transform.rotation.z, farestNPC.transform.rotation.w);
         transform.position = positionA;
         transform.rotation = rotatationA;
 
-        //GameObject.FindGameObjectWithTag("NPCSpawn").GetComponent<NpcSpawn>().spawnNPC(positionB, rotationB);
-        
-        //CmdProvidePositionToServer(myTransform.position);
-        //CmdProvideRotationToServer(myTransform.rotation);
-        //SwitchyActive = false;
-        //}
-        //CmdProvidePositionToServer(myTransform.position);
-        //CmdProvideRotationToServer(myTransform.rotation);
     }
 
 

@@ -104,15 +104,10 @@ public class LevelManager : MonoBehaviour
         this.resetNPC();
         this.resetPlayer();
         this.resetText();
-        this.resetBlur();
 
     }
 
-    private void resetBlur() {
-        //set blur to depth 0
-        this.setBlur(0);
 
-    }
     private void resetGroundPlayer() {
         //reset ground player's position and status
         GameObject groundPlayer = GameObject.FindGameObjectWithTag("GroundPlayer");

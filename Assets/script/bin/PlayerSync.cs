@@ -167,7 +167,6 @@ public class PlayerSync : NetworkBehaviour {
             CmdProvidePositionToServer(myTransform.position);
             CmdProvideRotationToServer(myTransform.rotation);
             CmdProvideDepthToServer(gameObject.transform.Find("head").gameObject.GetComponent<WormController>().depth);
-            Debug.Log("depth = " + gameObject.transform.Find("head").gameObject.GetComponent<WormController>().depth);
             CmdProvideOnGroundToServer(gameObject.transform.Find("head").gameObject.GetComponent<WormController>().onground);
         }
     }
