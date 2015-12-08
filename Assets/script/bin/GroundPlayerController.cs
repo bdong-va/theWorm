@@ -130,25 +130,6 @@ public class GroundPlayerController : MonoBehaviour
         }
     }
 
-    //[Command]
-    //void CmdSyncDataToServer()
-    //{
-    //    syncPos = transform.position;
-    //    syncRotation = angle;
-    //    syncSpeed = currentSpeed;
-    //}
-    ////only run on clients
-    ////tell server the position
-    //[ClientCallback]
-    //void TransmitDataFromServer()
-    //{
-    //    transform.position = syncPos;
-    //    angle = syncRotation;
-    //    transform.rotation = Quaternion.Euler(0f, 0f, angle);
-    //    currentSpeed = syncSpeed;
-    //    anim.SetFloat("speed", currentSpeed);
-    //}
-
 }
 
 
